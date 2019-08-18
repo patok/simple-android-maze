@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m2RB"
+            android:background="@drawable/m2rb"
             android:cropToPadding="false" />
 
         <ImageView
@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m3T" />
+            android:background="@drawable/m3t" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m2BL" />
+            android:background="@drawable/m2bl" />
 
     </TableRow>
 
@@ -49,7 +49,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m3L" />
+            android:background="@drawable/m3l" />
 
         <ImageView
             android:id="@+id/imageView10"
@@ -65,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m3R" />
+            android:background="@drawable/m3r" />
     </TableRow>
 
     <TableRow
@@ -80,7 +80,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m2TR"
+            android:background="@drawable/m2tr"
             android:cropToPadding="false" />
 
         <ImageView
@@ -89,7 +89,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m3B" />
+            android:background="@drawable/m3b" />
 
         <ImageView
             android:id="@+id/imageView4"
@@ -97,7 +97,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:background="@drawable/m2LT"
+            android:background="@drawable/m2lt"
             android:cropToPadding="false" />
     </TableRow>
 </TableLayout>
