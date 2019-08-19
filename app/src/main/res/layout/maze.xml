@@ -27,16 +27,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m2rb"
-                android:cropToPadding="false" />
+                android:cropToPadding="false"
+                android:src="@android:drawable/ic_menu_add"/>
 
             <ImageView
                 android:id="@+id/imageView7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m3t" />
 
             <ImageView
@@ -44,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m2bl" />
 
         </TableRow>
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m3l" />
 
             <ImageView
@@ -67,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m4" />
 
             <ImageView
@@ -75,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m3r" />
         </TableRow>
 
@@ -90,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m2tr"
                 android:cropToPadding="false" />
 
@@ -99,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m3b" />
 
             <ImageView
@@ -107,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"
+                android:adjustViewBounds="false"
                 android:background="@drawable/m2lt"
                 android:cropToPadding="false" />
 
