@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TableLayout
-        android:id="@+id/tableLayout"
+        android:id="@+id/mazeBoard"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
@@ -14,106 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.66">
-
-        <TableRow
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m2rb"
-                android:cropToPadding="false"
-                android:src="@android:drawable/ic_menu_add"/>
-
-            <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m3t" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m2bl" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/imageView9"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m3l" />
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m4" />
-
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m3r" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m2tr"
-                android:cropToPadding="false" />
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m3b" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:background="@drawable/m2lt"
-                android:cropToPadding="false" />
-
-        </TableRow>
-    </TableLayout>
+        app:layout_constraintVertical_bias="0.66"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -123,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout"
+        app:layout_constraintTop_toBottomOf="@+id/mazeBoard"
         app:layout_constraintVertical_bias="0.33">
 
         <Button
