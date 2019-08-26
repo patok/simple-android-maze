@@ -160,21 +160,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         // complete with event listener logic
         Log.d("MAZE", String.format("coords: %d %d ", playerX, playerY));
+
         if ((playerX >= 0 & playerX < board.getWidth() ) & (playerY >=0 & playerY < board.getHeight())) {
             imageViews[(playerX%board.getWidth())+ board.getHeight()*playerY].setImageDrawable(null);
         }
 
         if (v == buttonUp) {
-            playerY = (playerY == 0 ? 0 : playerY - 1);
+            if (playerY > 0 &&
+                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.NORTH) &
+                     board.getPiece(playerX,playerY-1).openTo(BoardPiece.Direction.SOUTH))) {
+                playerY -= 1;
+            }
         }
         if (v == buttonDown) {
-            playerY = (playerY == board.getHeight()-1 ? board.getHeight()-1 : playerY + 1);
+            if (playerY < board.getHeight()-1 &&
+                (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.SOUTH) &
+                        board.getPiece(playerX,playerY+1).openTo(BoardPiece.Direction.NORTH))) {
+                playerY += 1;
+            }
         }
+
         if (v == buttonLeft) {
-            playerX = (playerX == 0 ? 0: playerX - 1);
+            if (playerX > 0 &&
+                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.WEST) &
+                            board.getPiece(playerX-1, playerY).openTo(BoardPiece.Direction.EAST))){
+                    playerX -= 1;
+            }
         }
         if (v == buttonRight) {
-            playerX = (playerX == board.getWidth()-1 ? board.getWidth()-1: playerX + 1);
+            if (playerX < board.getWidth()-1 &&
+                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.EAST) &
+                            board.getPiece(playerX+1, playerY).openTo(BoardPiece.Direction.WEST))){
+                    playerX += 1;
+            }
         }
 
         if ((playerX >= 0 & playerX < board.getWidth() ) &&
