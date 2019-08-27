@@ -1,13 +1,18 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 
-import android.graphics.Path;
-
 /**
  * A maze 2D rectangular board. Knows the maze layout, dimensions. Can be queried for width, height
  * and piece by positional (0 based index). Can export/import textual representation.
  */
 public class MazeBoard {
+
+    public enum Direction {
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
+    }
 
     private int width = 0;
     private int height = 0;
@@ -56,37 +61,37 @@ public class MazeBoard {
     }
 
     // move single player
-    public boolean movePlayer(BoardPiece.Direction dir) {
+    public boolean movePlayer(Direction dir) {
         boolean moved = false;
         switch(dir) {
             case NORTH:
                 if (player.getY() > 0 &&
-                        (getPiece(player.getX(), player.getY()).openTo(BoardPiece.Direction.NORTH) &
-                         getPiece(player.getX(), player.getY()-1).openTo(BoardPiece.Direction.SOUTH))) {
+                        (getPiece(player.getX(), player.getY()).openTo(Direction.NORTH) &
+                         getPiece(player.getX(), player.getY()-1).openTo(Direction.SOUTH))) {
                     player.setY(player.getY()-1);
                     moved = true;
                 }
                 break;
             case SOUTH:
                 if (player.getY() < getHeight()-1 &&
-                        (getPiece(player.getX(), player.getY()).openTo(BoardPiece.Direction.SOUTH) &
-                                getPiece(player.getX(), player.getY()+1).openTo(BoardPiece.Direction.NORTH))) {
+                        (getPiece(player.getX(), player.getY()).openTo(Direction.SOUTH) &
+                                getPiece(player.getX(), player.getY()+1).openTo(Direction.NORTH))) {
                     player.setY(player.getY()+1);
                     moved = true;
                 }
                 break;
             case WEST:
                 if (player.getX() > 0 &&
-                        (getPiece(player.getX(), player.getY()).openTo(BoardPiece.Direction.WEST) &
-                                getPiece(player.getX()-1, player.getY()).openTo(BoardPiece.Direction.EAST))) {
+                        (getPiece(player.getX(), player.getY()).openTo(Direction.WEST) &
+                                getPiece(player.getX()-1, player.getY()).openTo(Direction.EAST))) {
                     player.setX(player.getX()-1);
                     moved = true;
                 }
                 break;
             case EAST:
                 if (player.getX() < getWidth()-1 &&
-                        (getPiece(player.getX(), player.getY()).openTo(BoardPiece.Direction.EAST) &
-                                getPiece(player.getX()+1, player.getY()).openTo(BoardPiece.Direction.WEST))) {
+                        (getPiece(player.getX(), player.getY()).openTo(Direction.EAST) &
+                                getPiece(player.getX()+1, player.getY()).openTo(Direction.WEST))) {
                     player.setX(player.getX()+1);
                     moved = true;
                 }

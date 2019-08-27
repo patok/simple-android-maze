@@ -4,30 +4,20 @@ import java.util.Vector;
 
 class BoardPiece {
 
-    private final Vector<Direction> openings = new Vector<Direction>();
-
-    public enum Direction {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST
-    }
+    private final Vector<MazeBoard.Direction> openings = new Vector<MazeBoard.Direction>();
 
     public BoardPiece(boolean west, boolean north, boolean east, boolean south){
         if (west)
-            openings.add(Direction.WEST);
+            openings.add(MazeBoard.Direction.WEST);
         if (north)
-            openings.add(Direction.NORTH);
+            openings.add(MazeBoard.Direction.NORTH);
         if (east)
-            openings.add(Direction.EAST);
+            openings.add(MazeBoard.Direction.EAST);
         if (south)
-            openings.add(Direction.SOUTH);
+            openings.add(MazeBoard.Direction.SOUTH);
     }
 
-    // TODO delete public method
-    private Direction[] getOpenings() { return (Direction[]) openings.toArray();}
-
-    public boolean openTo(Direction direction){
+    public boolean openTo(MazeBoard.Direction direction){
         return openings.contains(direction);
     }
 

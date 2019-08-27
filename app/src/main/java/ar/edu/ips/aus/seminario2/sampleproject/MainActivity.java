@@ -67,17 +67,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             for (int j=0; j<width; j++){
                 BoardPiece piece = board.getPiece(j, i);
-                if (piece.openTo(BoardPiece.Direction.WEST)){
-                    if (piece.openTo(BoardPiece.Direction.NORTH)){
-                        if (piece.openTo(BoardPiece.Direction.EAST)){
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)){
+                if (piece.openTo(MazeBoard.Direction.WEST)){
+                    if (piece.openTo(MazeBoard.Direction.NORTH)){
+                        if (piece.openTo(MazeBoard.Direction.EAST)){
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
                                 resId = R.drawable.m4;
                             }
                             else {
                                 resId = R.drawable.m3b;
                             }
                         } else {
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)) {
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
                                 resId = R.drawable.m3r;
                             }
                             else {
@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     else {
-                        if (piece.openTo(BoardPiece.Direction.EAST)){
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)){
+                        if (piece.openTo(MazeBoard.Direction.EAST)){
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
                                 resId = R.drawable.m3t
                                 ;
                             }
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 resId = R.drawable.m2h;
                             }
                         } else {
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)) {
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
                                 resId = R.drawable.m2bl;                                ;
                             }
                             else {
@@ -105,16 +105,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 } else {
-                    if (piece.openTo(BoardPiece.Direction.NORTH)){
-                        if (piece.openTo(BoardPiece.Direction.EAST)){
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)){
+                    if (piece.openTo(MazeBoard.Direction.NORTH)){
+                        if (piece.openTo(MazeBoard.Direction.EAST)){
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
                                 resId = R.drawable.m3l;
                             }
                             else {
                                 resId = R.drawable.m2tr;
                             }
                         } else {
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)) {
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
                                 resId = R.drawable.m2v;
                             }
                             else {
@@ -123,15 +123,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     else {
-                        if (piece.openTo(BoardPiece.Direction.EAST)){
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)){
+                        if (piece.openTo(MazeBoard.Direction.EAST)){
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
                                 resId = R.drawable.m2rb;
                             }
                             else {
                                 resId = R.drawable.m1r;
                             }
                         } else {
-                            if (piece.openTo(BoardPiece.Direction.SOUTH)) {
+                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
                                 resId = R.drawable.m1b;
                             }
                             else {
@@ -165,16 +165,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setImageDrawable(null);
 
         if (v == buttonUp) {
-            board.movePlayer(BoardPiece.Direction.NORTH);
+            board.movePlayer(MazeBoard.Direction.NORTH);
         }
         else if (v == buttonDown) {
-            board.movePlayer(BoardPiece.Direction.SOUTH);
+            board.movePlayer(MazeBoard.Direction.SOUTH);
         }
         else if (v == buttonLeft) {
-            board.movePlayer(BoardPiece.Direction.WEST);
+            board.movePlayer(MazeBoard.Direction.WEST);
         }
         else if (v == buttonRight) {
-            board.movePlayer(BoardPiece.Direction.EAST);
+            board.movePlayer(MazeBoard.Direction.EAST);
         }
 
         imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
