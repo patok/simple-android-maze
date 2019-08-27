@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageView[] imageViews = null;
 
-    private int playerX = 2, playerY = 1;
     private MazeBoard board;
 
     @Override
@@ -41,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupPlayerToken() {
-        imageViews[(playerX%board.getWidth())+ board.getHeight()*playerY].setImageResource(android.R.drawable.ic_menu_add);
+        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
+                setImageResource(android.R.drawable.ic_menu_add);
     }
 
     private void setupMazeBoard() {
@@ -159,46 +159,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         // complete with event listener logic
-        Log.d("MAZE", String.format("coords: %d %d ", playerX, playerY));
+        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
 
-        if ((playerX >= 0 & playerX < board.getWidth() ) & (playerY >=0 & playerY < board.getHeight())) {
-            imageViews[(playerX%board.getWidth())+ board.getHeight()*playerY].setImageDrawable(null);
-        }
+        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
+                setImageDrawable(null);
 
         if (v == buttonUp) {
-            if (playerY > 0 &&
-                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.NORTH) &
-                     board.getPiece(playerX,playerY-1).openTo(BoardPiece.Direction.SOUTH))) {
-                playerY -= 1;
-            }
+            board.movePlayer(BoardPiece.Direction.NORTH);
         }
-        if (v == buttonDown) {
-            if (playerY < board.getHeight()-1 &&
-                (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.SOUTH) &
-                        board.getPiece(playerX,playerY+1).openTo(BoardPiece.Direction.NORTH))) {
-                playerY += 1;
-            }
+        else if (v == buttonDown) {
+            board.movePlayer(BoardPiece.Direction.SOUTH);
+        }
+        else if (v == buttonLeft) {
+            board.movePlayer(BoardPiece.Direction.WEST);
+        }
+        else if (v == buttonRight) {
+            board.movePlayer(BoardPiece.Direction.EAST);
         }
 
-        if (v == buttonLeft) {
-            if (playerX > 0 &&
-                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.WEST) &
-                            board.getPiece(playerX-1, playerY).openTo(BoardPiece.Direction.EAST))){
-                    playerX -= 1;
-            }
-        }
-        if (v == buttonRight) {
-            if (playerX < board.getWidth()-1 &&
-                    (board.getPiece(playerX, playerY).openTo(BoardPiece.Direction.EAST) &
-                            board.getPiece(playerX+1, playerY).openTo(BoardPiece.Direction.WEST))){
-                    playerX += 1;
-            }
-        }
+        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
+                setImageResource(android.R.drawable.ic_menu_add);
 
-        if ((playerX >= 0 & playerX < board.getWidth() ) &&
-                (playerY >=0 & playerY < board.getHeight())) {
-            imageViews[(playerX%board.getWidth())+ board.getHeight()*playerY].setImageResource(android.R.drawable.ic_menu_add);
-        }
-        Log.d("MAZE", String.format("coords: %d %d ", playerX, playerY));
+        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
     }
 }
