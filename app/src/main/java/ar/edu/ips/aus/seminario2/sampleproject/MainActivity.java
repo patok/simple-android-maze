@@ -67,79 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             for (int j=0; j<width; j++){
                 BoardPiece piece = board.getPiece(j, i);
-                if (piece.openTo(MazeBoard.Direction.WEST)){
-                    if (piece.openTo(MazeBoard.Direction.NORTH)){
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m4;
-                            }
-                            else {
-                                resId = R.drawable.m3b;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m3r;
-                            }
-                            else {
-                                resId = R.drawable.m2lt;
-                            }
-                        }
-                    }
-                    else {
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m3t
-                                ;
-                            }
-                            else {
-                                resId = R.drawable.m2h;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m2bl;                                ;
-                            }
-                            else {
-                                resId = R.drawable.m1l;
-                            }
-                        }
 
-                    }
-                } else {
-                    if (piece.openTo(MazeBoard.Direction.NORTH)){
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m3l;
-                            }
-                            else {
-                                resId = R.drawable.m2tr;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m2v;
-                            }
-                            else {
-                                resId = R.drawable.m1t;
-                            }
-                        }
-                    }
-                    else {
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m2rb;
-                            }
-                            else {
-                                resId = R.drawable.m1r;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m1b;
-                            }
-                            else {
-                                throw new RuntimeException("Maze piece not recognized!");
-                            }
-                        }
-                    }
-                }
+                resId = lookupResource(piece);
 
                 ImageView imageView = new ImageView(this);
                 imageView.setBackgroundResource(resId);
@@ -155,6 +84,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
    }
+
+    private int lookupResource(BoardPiece piece) {
+        int iconIndex = 0b1000 * (piece.openTo(MazeBoard.Direction.WEST)? 1:0) +
+                0b0100 * (piece.openTo(MazeBoard.Direction.NORTH)? 1:0) +
+                0b0010 * (piece.openTo(MazeBoard.Direction.EAST)? 1:0) +
+                0b0001 * (piece.openTo(MazeBoard.Direction.SOUTH)? 1:0);
+
+        int[] iconLookupTable = { 0,
+                R.drawable.m1b,
+                R.drawable.m1r,
+                R.drawable.m2rb,
+                R.drawable.m1t,
+                R.drawable.m2v,
+                R.drawable.m2tr,
+                R.drawable.m3l,
+                R.drawable.m1l,
+                R.drawable.m2bl,
+                R.drawable.m2h,
+                R.drawable.m3t,
+                R.drawable.m2lt,
+                R.drawable.m3r,
+                R.drawable.m3b,
+                R.drawable.m4};
+
+        return iconLookupTable[iconIndex];
+    }
 
     @Override
     public void onClick(View v) {
