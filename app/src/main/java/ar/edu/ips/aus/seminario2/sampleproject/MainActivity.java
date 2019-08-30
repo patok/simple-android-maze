@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,19 +35,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
 
-        setupMazeBoard();
+        GameView mazeView = (GameView)findViewById(R.id.gameView);
+        mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        mazeView.setZOrderMediaOverlay(true);
+        mazeView.setZOrderOnTop(true);
 
-        setupPlayerToken();
+        setupMazeBoard(mazeView.getBoard());
     }
 
-    private void setupPlayerToken() {
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageResource(android.R.drawable.ic_menu_add);
-    }
+    // TODO this must probably be moved to GameView, or helper.
+    private void setupMazeBoard(MazeBoard theBoard) {
 
-    private void setupMazeBoard() {
-
-        board = MazeBoard.from("empty");
+        board = theBoard;
         int height = board.getHeight();
         int width = board.getWidth();
 
@@ -67,79 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             for (int j=0; j<width; j++){
                 BoardPiece piece = board.getPiece(j, i);
-                if (piece.openTo(MazeBoard.Direction.WEST)){
-                    if (piece.openTo(MazeBoard.Direction.NORTH)){
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m4;
-                            }
-                            else {
-                                resId = R.drawable.m3b;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m3r;
-                            }
-                            else {
-                                resId = R.drawable.m2lt;
-                            }
-                        }
-                    }
-                    else {
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m3t
-                                ;
-                            }
-                            else {
-                                resId = R.drawable.m2h;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m2bl;                                ;
-                            }
-                            else {
-                                resId = R.drawable.m1l;
-                            }
-                        }
 
-                    }
-                } else {
-                    if (piece.openTo(MazeBoard.Direction.NORTH)){
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m3l;
-                            }
-                            else {
-                                resId = R.drawable.m2tr;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m2v;
-                            }
-                            else {
-                                resId = R.drawable.m1t;
-                            }
-                        }
-                    }
-                    else {
-                        if (piece.openTo(MazeBoard.Direction.EAST)){
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)){
-                                resId = R.drawable.m2rb;
-                            }
-                            else {
-                                resId = R.drawable.m1r;
-                            }
-                        } else {
-                            if (piece.openTo(MazeBoard.Direction.SOUTH)) {
-                                resId = R.drawable.m1b;
-                            }
-                            else {
-                                throw new RuntimeException("Maze piece not recognized!");
-                            }
-                        }
-                    }
-                }
+                resId = lookupResource(piece);
 
                 ImageView imageView = new ImageView(this);
                 imageView.setBackgroundResource(resId);
@@ -156,30 +85,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
    }
 
+    private int lookupResource(BoardPiece piece) {
+        int iconIndex = 0b1000 * (piece.isOpen(MazeBoard.Direction.WEST)? 1:0) +
+                0b0100 * (piece.isOpen(MazeBoard.Direction.NORTH)? 1:0) +
+                0b0010 * (piece.isOpen(MazeBoard.Direction.EAST)? 1:0) +
+                0b0001 * (piece.isOpen(MazeBoard.Direction.SOUTH)? 1:0);
+
+        int[] iconLookupTable = { 0,
+                R.drawable.m1b,
+                R.drawable.m1r,
+                R.drawable.m2rb,
+                R.drawable.m1t,
+                R.drawable.m2v,
+                R.drawable.m2tr,
+                R.drawable.m3l,
+                R.drawable.m1l,
+                R.drawable.m2bl,
+                R.drawable.m2h,
+                R.drawable.m3t,
+                R.drawable.m2lt,
+                R.drawable.m3r,
+                R.drawable.m3b,
+                R.drawable.m4};
+
+        return iconLookupTable[iconIndex];
+    }
+
     @Override
     public void onClick(View v) {
         // complete with event listener logic
-        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
-
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageDrawable(null);
-
         if (v == buttonUp) {
-            board.movePlayer(MazeBoard.Direction.NORTH);
+            board.setNewDirection(MazeBoard.Direction.NORTH);
         }
         else if (v == buttonDown) {
-            board.movePlayer(MazeBoard.Direction.SOUTH);
+            board.setNewDirection(MazeBoard.Direction.SOUTH);
         }
         else if (v == buttonLeft) {
-            board.movePlayer(MazeBoard.Direction.WEST);
+            board.setNewDirection(MazeBoard.Direction.WEST);
         }
         else if (v == buttonRight) {
-            board.movePlayer(MazeBoard.Direction.EAST);
+            board.setNewDirection(MazeBoard.Direction.EAST);
         }
 
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageResource(android.R.drawable.ic_menu_add);
-
-        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
     }
 }

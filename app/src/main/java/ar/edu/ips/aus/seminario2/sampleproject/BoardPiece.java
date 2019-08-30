@@ -17,7 +17,7 @@ class BoardPiece {
             openings.add(MazeBoard.Direction.SOUTH);
     }
 
-    public boolean openTo(MazeBoard.Direction direction){
+    public boolean isOpen(MazeBoard.Direction direction){
         return openings.contains(direction);
     }
 
