@@ -86,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
    }
 
     private int lookupResource(BoardPiece piece) {
-        int iconIndex = 0b1000 * (piece.openTo(MazeBoard.Direction.WEST)? 1:0) +
-                0b0100 * (piece.openTo(MazeBoard.Direction.NORTH)? 1:0) +
-                0b0010 * (piece.openTo(MazeBoard.Direction.EAST)? 1:0) +
-                0b0001 * (piece.openTo(MazeBoard.Direction.SOUTH)? 1:0);
+        int iconIndex = 0b1000 * (piece.isOpen(MazeBoard.Direction.WEST)? 1:0) +
+                0b0100 * (piece.isOpen(MazeBoard.Direction.NORTH)? 1:0) +
+                0b0010 * (piece.isOpen(MazeBoard.Direction.EAST)? 1:0) +
+                0b0001 * (piece.isOpen(MazeBoard.Direction.SOUTH)? 1:0);
 
         int[] iconLookupTable = { 0,
                 R.drawable.m1b,

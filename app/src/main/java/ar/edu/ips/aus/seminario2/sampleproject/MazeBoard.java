@@ -66,32 +66,32 @@ public class MazeBoard {
         switch(dir) {
             case NORTH:
                 if (player.getY() > 0 &&
-                        (getPiece(player.getX(), player.getY()).openTo(Direction.NORTH) &
-                         getPiece(player.getX(), player.getY()-1).openTo(Direction.SOUTH))) {
+                        (getPiece(player.getX(), player.getY()).isOpen(Direction.NORTH) &
+                         getPiece(player.getX(), player.getY()-1).isOpen(Direction.SOUTH))) {
                     player.setY(player.getY()-1);
                     moved = true;
                 }
                 break;
             case SOUTH:
                 if (player.getY() < getHeight()-1 &&
-                        (getPiece(player.getX(), player.getY()).openTo(Direction.SOUTH) &
-                                getPiece(player.getX(), player.getY()+1).openTo(Direction.NORTH))) {
+                        (getPiece(player.getX(), player.getY()).isOpen(Direction.SOUTH) &
+                                getPiece(player.getX(), player.getY()+1).isOpen(Direction.NORTH))) {
                     player.setY(player.getY()+1);
                     moved = true;
                 }
                 break;
             case WEST:
                 if (player.getX() > 0 &&
-                        (getPiece(player.getX(), player.getY()).openTo(Direction.WEST) &
-                                getPiece(player.getX()-1, player.getY()).openTo(Direction.EAST))) {
+                        (getPiece(player.getX(), player.getY()).isOpen(Direction.WEST) &
+                                getPiece(player.getX()-1, player.getY()).isOpen(Direction.EAST))) {
                     player.setX(player.getX()-1);
                     moved = true;
                 }
                 break;
             case EAST:
                 if (player.getX() < getWidth()-1 &&
-                        (getPiece(player.getX(), player.getY()).openTo(Direction.EAST) &
-                                getPiece(player.getX()+1, player.getY()).openTo(Direction.WEST))) {
+                        (getPiece(player.getX(), player.getY()).isOpen(Direction.EAST) &
+                                getPiece(player.getX()+1, player.getY()).isOpen(Direction.WEST))) {
                     player.setX(player.getX()+1);
                     moved = true;
                 }
