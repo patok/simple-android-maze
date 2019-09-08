@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,19 +35,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
 
-        setupMazeBoard();
+        GameView mazeView = (GameView)findViewById(R.id.gameView);
+        mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        mazeView.setZOrderMediaOverlay(true);
+        mazeView.setZOrderOnTop(true);
 
-        setupPlayerToken();
+        setupMazeBoard(mazeView.getBoard());
     }
 
-    private void setupPlayerToken() {
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageResource(android.R.drawable.ic_menu_add);
-    }
+    private void setupMazeBoard(MazeBoard theBoard) {
 
-    private void setupMazeBoard() {
-
-        board = MazeBoard.from("empty");
+        board = theBoard;
         int height = board.getHeight();
         int width = board.getWidth();
 
@@ -114,27 +113,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         // complete with event listener logic
-        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
-
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageDrawable(null);
-
         if (v == buttonUp) {
-            board.movePlayer(MazeBoard.Direction.NORTH);
+            board.setNewDirection(MazeBoard.Direction.NORTH);
         }
         else if (v == buttonDown) {
-            board.movePlayer(MazeBoard.Direction.SOUTH);
+            board.setNewDirection(MazeBoard.Direction.SOUTH);
         }
         else if (v == buttonLeft) {
-            board.movePlayer(MazeBoard.Direction.WEST);
+            board.setNewDirection(MazeBoard.Direction.WEST);
         }
         else if (v == buttonRight) {
-            board.movePlayer(MazeBoard.Direction.EAST);
+            board.setNewDirection(MazeBoard.Direction.EAST);
         }
 
-        imageViews[(board.getPlayer().getX()%board.getWidth())+ board.getHeight()*board.getPlayer().getY()].
-                setImageResource(android.R.drawable.ic_menu_add);
-
-        Log.d("MAZE", String.format("coords: %d %d ", board.getPlayer().getX(), board.getPlayer().getY()));
     }
 }

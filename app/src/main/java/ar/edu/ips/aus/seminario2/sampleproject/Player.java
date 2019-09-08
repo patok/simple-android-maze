@@ -1,7 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 public class Player {
-
     private int x;
     private int y;
 
@@ -25,4 +24,5 @@ public class Player {
     public void setY(int y) {
         this.y = y;
     }
+
 }

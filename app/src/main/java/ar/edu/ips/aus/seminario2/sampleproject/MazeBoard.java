@@ -1,6 +1,9 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+
 /**
  * A maze 2D rectangular board. Knows the maze layout, dimensions. Can be queried for width, height
  * and piece by positional (0 based index). Can export/import textual representation.
@@ -18,9 +21,12 @@ public class MazeBoard {
     private int height = 0;
     private BoardPiece[] board = null;
     private Player player = new Player(0,0);
+    private Direction playerDirection = Direction.NORTH;
 
+    // FIXME more appropiate to call tile count?
     public int getHeight() {return height;}
 
+    // FIXME more appropiate to call tile count?
     public int getWidth() { return width;}
 
     public BoardPiece getPiece(int x, int y) {
@@ -61,7 +67,7 @@ public class MazeBoard {
     }
 
     // move single player
-    public boolean movePlayer(Direction dir) {
+    private boolean movePlayer(Direction dir) {
         boolean moved = false;
         switch(dir) {
             case NORTH:
@@ -99,4 +105,13 @@ public class MazeBoard {
         }
         return moved;
     }
+
+    public void setNewDirection(Direction direction) {
+        this.playerDirection = direction;
+    }
+
+    public void update() {
+        movePlayer(playerDirection);
+    }
+
 }
