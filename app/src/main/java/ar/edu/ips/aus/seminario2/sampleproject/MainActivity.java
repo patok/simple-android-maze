@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupMazeBoard(mazeView.getBoard());
     }
 
+    // TODO this must probably be moved to GameView, or helper.
     private void setupMazeBoard(MazeBoard theBoard) {
 
         board = theBoard;
