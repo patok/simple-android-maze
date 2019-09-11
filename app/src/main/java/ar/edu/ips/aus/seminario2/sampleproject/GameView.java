@@ -6,16 +6,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
+    private static final int SPRITE_HEIGHT = 72;
+    private static final int SPRITE_WIDTH = 52;
     private GameAnimationThread thread;
 
     private MazeBoard board;
-    private Bitmap playerImage;
+    private Bitmap playerSprites;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,7 +40,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         board = MazeBoard.from("some repl");
         getHolder().addCallback(this);
 
-        playerImage = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_add);
+        playerSprites = BitmapFactory.decodeResource(getResources(), R.drawable.characters);
+
+        Log.d("BITMAP:", String.format("metadata -bytes: %d - size: %d x %d",
+                playerSprites.getByteCount(), playerSprites.getWidth(), playerSprites.getHeight()));
 
         thread = new GameAnimationThread(getHolder(), this);
         setFocusable(true);
@@ -80,14 +87,44 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         if (canvas != null){
-            playerImage.getWidth();
-            playerImage.getHeight();
             long tileWidth = this.getWidth()/board.getWidth();
             long tileHeight = this.getHeight()/board.getHeight();
-            long x = board.getPlayer().getX() * tileWidth + (tileWidth - playerImage.getWidth()) / 2;
-            long y = board.getPlayer().getY() * tileHeight + (tileHeight - playerImage.getHeight())/ 2;
+            float x = (float) (board.getPlayer().getBoardX() * tileWidth + (tileWidth - SPRITE_WIDTH) / 2);
+            float y = (float) (board.getPlayer().getBoardY() * tileHeight + (tileHeight - SPRITE_HEIGHT)/ 2);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            canvas.drawBitmap(playerImage, x, y, null);
+
+            int srcTop = 0;
+            int srcLeft = 0;
+            int srcRight = 0;
+            int srcBottom = 0;
+            int[] spriteOffset = { SPRITE_WIDTH *6, SPRITE_WIDTH*7, SPRITE_WIDTH*8, SPRITE_WIDTH*7, SPRITE_WIDTH*6};
+            switch (board.getPlayerDirection()){
+                case WEST:
+                    srcTop = SPRITE_HEIGHT;
+                    srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
+                    break;
+                case NORTH:
+                    srcTop = SPRITE_HEIGHT * 3;
+                    srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
+                    break;
+                case EAST:
+                    srcTop = SPRITE_HEIGHT * 2;
+                    srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
+                    break;
+                case SOUTH:
+                    srcTop = 0;
+                    srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
+                    break;
+            }
+            srcBottom = srcTop + SPRITE_HEIGHT;
+            srcRight = srcLeft + SPRITE_WIDTH;
+            Rect srcRect = new Rect(srcLeft, srcTop, srcRight, srcBottom);
+
+            Rect dstRect = new Rect((int)x,(int)y,(int)x+SPRITE_WIDTH,(int)y+SPRITE_HEIGHT);
+            Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+
+            canvas.drawBitmap(playerSprites, srcRect, dstRect, null);
+
         }
     }
 }
