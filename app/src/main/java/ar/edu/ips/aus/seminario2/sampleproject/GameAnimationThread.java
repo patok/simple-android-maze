@@ -33,7 +33,7 @@ public class GameAnimationThread extends Thread {
                     this.gameView.update();
                     this.gameView.draw(canvas);
                 }
-                Thread.sleep(100);
+                Thread.sleep(10);
                 intervalCount++;
                 if (COUNT_INTERVAL <= intervalCount){
                     long now = System.nanoTime();

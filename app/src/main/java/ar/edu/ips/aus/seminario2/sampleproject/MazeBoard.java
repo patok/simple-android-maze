@@ -74,7 +74,13 @@ public class MazeBoard {
                 if (player.getY() > 0 &&
                         (getPiece(player.getX(), player.getY()).isOpen(Direction.NORTH) &
                          getPiece(player.getX(), player.getY()-1).isOpen(Direction.SOUTH))) {
-                    player.setY(player.getY()-1);
+                    double newOffset = player.getYOffset() - Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
+                    if (1.0 > newOffset & newOffset >  -1.0) {
+                        player.setYOffset(newOffset);
+                    } else {
+                        player.setYOffset(0.0);
+                        player.setY(player.getY()-1);
+                    }
                     moved = true;
                 }
                 break;
@@ -82,7 +88,13 @@ public class MazeBoard {
                 if (player.getY() < getHeight()-1 &&
                         (getPiece(player.getX(), player.getY()).isOpen(Direction.SOUTH) &
                                 getPiece(player.getX(), player.getY()+1).isOpen(Direction.NORTH))) {
-                    player.setY(player.getY()+1);
+                    double newOffset = player.getYOffset() + Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
+                    if (-1.0 < newOffset & newOffset <  1.0) {
+                        player.setYOffset(newOffset);
+                    } else {
+                        player.setYOffset(0.0);
+                        player.setY(player.getY()+1);
+                    }
                     moved = true;
                 }
                 break;
@@ -90,7 +102,13 @@ public class MazeBoard {
                 if (player.getX() > 0 &&
                         (getPiece(player.getX(), player.getY()).isOpen(Direction.WEST) &
                                 getPiece(player.getX()-1, player.getY()).isOpen(Direction.EAST))) {
-                    player.setX(player.getX()-1);
+                    double newOffset = player.getXOffset() - Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
+                    if (1.0 > newOffset & newOffset >  -1.0) {
+                        player.setXOffset(newOffset);
+                    } else {
+                        player.setXOffset(0.0);
+                        player.setX(player.getX()-1);
+                    }
                     moved = true;
                 }
                 break;
@@ -98,7 +116,13 @@ public class MazeBoard {
                 if (player.getX() < getWidth()-1 &&
                         (getPiece(player.getX(), player.getY()).isOpen(Direction.EAST) &
                                 getPiece(player.getX()+1, player.getY()).isOpen(Direction.WEST))) {
-                    player.setX(player.getX()+1);
+                    double newOffset = player.getXOffset() + Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
+                    if (1.0 > newOffset & newOffset >  -1.0) {
+                        player.setXOffset(newOffset);
+                    } else {
+                        player.setXOffset(0.0);
+                        player.setX(player.getX()+1);
+                    }
                     moved = true;
                 }
                 break;

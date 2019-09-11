@@ -84,8 +84,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             playerImage.getHeight();
             long tileWidth = this.getWidth()/board.getWidth();
             long tileHeight = this.getHeight()/board.getHeight();
-            long x = board.getPlayer().getX() * tileWidth + (tileWidth - playerImage.getWidth()) / 2;
-            long y = board.getPlayer().getY() * tileHeight + (tileHeight - playerImage.getHeight())/ 2;
+            float x = (float) (board.getPlayer().getBoardX() * tileWidth + (tileWidth - playerImage.getWidth()) / 2);
+            float y = (float) (board.getPlayer().getBoardY() * tileHeight + (tileHeight - playerImage.getHeight())/ 2);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             canvas.drawBitmap(playerImage, x, y, null);
         }
