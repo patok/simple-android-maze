@@ -3,6 +3,7 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 public class Player {
     public static final double OFFSET_VELOCITY = 5.0;
     public static final double OFFSET_STEPS = 100.0;
+    public static final float TOKEN_RADIUS = 15;
     private int x;
     private int y;
     private double yOffset = 0.0;

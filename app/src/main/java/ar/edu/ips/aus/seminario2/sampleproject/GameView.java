@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -80,14 +81,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         if (canvas != null){
-            playerImage.getWidth();
-            playerImage.getHeight();
             long tileWidth = this.getWidth()/board.getWidth();
             long tileHeight = this.getHeight()/board.getHeight();
-            float x = (float) (board.getPlayer().getBoardX() * tileWidth + (tileWidth - playerImage.getWidth()) / 2);
-            float y = (float) (board.getPlayer().getBoardY() * tileHeight + (tileHeight - playerImage.getHeight())/ 2);
+            float x = (float) (board.getPlayer().getBoardX() * tileWidth + (tileWidth) / 2);
+            float y = (float) (board.getPlayer().getBoardY() * tileHeight + (tileHeight)/ 2);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            canvas.drawBitmap(playerImage, x, y, null);
+
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.MAGENTA);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(x, y, Player.TOKEN_RADIUS, paint);
         }
     }
 }
