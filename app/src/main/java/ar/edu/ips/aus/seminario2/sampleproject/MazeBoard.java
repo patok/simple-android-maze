@@ -21,6 +21,7 @@ public class MazeBoard {
     private int height = 0;
     private BoardPiece[] board = null;
     private Player player = new Player(0,0);
+
     private Direction playerDirection = Direction.NORTH;
 
     // FIXME more appropiate to call tile count?
@@ -132,6 +133,11 @@ public class MazeBoard {
 
     public void setNewDirection(Direction direction) {
         this.playerDirection = direction;
+    }
+
+
+    public Direction getPlayerDirection() {
+        return playerDirection;
     }
 
     public void update() {
