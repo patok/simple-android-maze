@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.abemart.wroup.client.WroupClient;
+import com.abemart.wroup.common.messages.MessageWrapper;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final int SPRITE_HEIGHT = 72;
@@ -20,6 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MazeBoard board;
     private Bitmap playerSprites;
+    private WroupClient client;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -80,6 +84,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update() {
         board.update();
+        if (client != null){
+            MessageWrapper message = new MessageWrapper();
+            message.setMessage(String.format("position: %f,%f", this.board.getPlayer().getBoardX(), this.board.getPlayer().getBoardY()));
+            message.setMessageType(MessageWrapper.MessageType.NORMAL);
+            client.sendMessageToServer(message);
+        }
     }
 
     @Override
@@ -126,5 +136,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawBitmap(playerSprites, srcRect, dstRect, null);
 
         }
+    }
+
+    public void setClient(WroupClient client) {
+        this.client = client;
     }
 }
