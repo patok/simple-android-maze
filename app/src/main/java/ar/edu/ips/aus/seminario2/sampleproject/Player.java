@@ -67,10 +67,10 @@ public class Player {
                 this.xVel = 0.0;
                 break;
         }
-        this.move();
+        this.computeMovement();
     }
 
-    public void move() {
+    public void computeMovement() {
         this.x = this.x + this.xVel;
         this.y = this.y + this.yVel;
     }
