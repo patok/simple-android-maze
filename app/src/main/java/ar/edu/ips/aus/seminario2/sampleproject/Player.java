@@ -1,15 +1,27 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.EAST;
+import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NONE;
+import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NORTH;
+import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.SOUTH;
+import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.WEST;
+
 public class Player {
+    private final String ID;
     private double x;
     private double y;
     private double xVel = 0.0;
     private double yVel = 0.0;
-    private static double VEL_FACTOR = 0.02;
+    private final static double VEL_FACTOR = 0.02;
 
-    public Player(double x, double y) {
+    public Player(String id, double x, double y) {
+        this.ID = id;
         this.x = x;
         this.y = y;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public double getX() {
@@ -44,44 +56,104 @@ public class Player {
         this.yVel = yVel;
     }
 
-    public void move(MazeBoard.Direction direction) {
-        switch (direction){
+    public boolean move(MazeBoard board) {
+        boolean moved = false;
+        int pieceXPos = (int) getX();
+        int pieceYPos = (int) getY();
+
+        MazeBoard.Direction dir = NONE;
+        dir = getDirection();
+
+        switch(dir) {
             case NORTH:
-                this.yVel = -1.0 * VEL_FACTOR;
-                this.xVel = 0.0;
+                if ((getY() > (double)pieceYPos + 0.5d) ||
+                        board.getPiece(pieceXPos, pieceYPos).isOpen(NORTH)) {
+                    this.computeMovement();
+                    moved = true;
+                } else {
+                    stopOnY((double)pieceYPos + 0.5d );
+                }
                 break;
             case SOUTH:
-                this.yVel = 1.0 * VEL_FACTOR;
-                this.xVel = 0.0;
-                break;
-            case EAST:
-                this.yVel = 0.0;
-                this.xVel = 1.0 * VEL_FACTOR;
+                if ((getY() < (double)pieceYPos + 0.5d) ||
+                        board.getPiece(pieceXPos, pieceYPos).isOpen(MazeBoard.Direction.SOUTH)) {
+                    this.computeMovement();
+                    moved = true;
+                } else {
+                    stopOnY((double)pieceYPos + 0.5d);
+                }
                 break;
             case WEST:
-                this.yVel = 0.0;
-                this.xVel = -1.0 * VEL_FACTOR;
+                if ((getX() > (double)pieceXPos + 0.5d) ||
+                        board.getPiece(pieceXPos, pieceYPos).isOpen(WEST)) {
+                    this.computeMovement();
+                    moved = true;
+                } else {
+                    stopOnX((double)pieceXPos + 0.5d);
+                }
                 break;
-            default:
-                this.yVel = 0.0;
-                this.xVel = 0.0;
+            case EAST:
+                if ( (getX() < (double)pieceXPos + 0.5d) ||
+                        board.getPiece(pieceXPos, pieceYPos).isOpen(EAST)) {
+                    this.computeMovement();
+                    moved = true;
+                } else {
+                    stopOnX((double)pieceXPos + 0.5d);
+                }
                 break;
         }
-        this.move();
+        return moved;
     }
 
-    public void move() {
+    public MazeBoard.Direction getDirection() {
+        if (this.xVel > 0.0)
+            return EAST;
+        else if (this.xVel < 0.0)
+            return WEST;
+        else if(this.yVel > 0.0)
+            return SOUTH;
+        else if(this.yVel < 0.0)
+            return NORTH;
+        return NONE;
+    }
+
+    private void computeMovement() {
         this.x = this.x + this.xVel;
         this.y = this.y + this.yVel;
     }
 
-    public void stopOnX(double x) {
+    private void stopOnX(double x) {
         this.x = x;
         this.xVel = 0.0;
     }
 
-    public void stopOnY(double y) {
+    private void stopOnY(double y) {
         this.y = y;
         this.yVel = 0.0;
+    }
+
+    public void setNewDirection(MazeBoard.Direction direction) {
+        switch (direction){
+            case NORTH:
+                yVel = -1.0 * VEL_FACTOR;
+                xVel = 0.0;
+                break;
+            case SOUTH:
+                yVel = 1.0 * VEL_FACTOR;
+                xVel = 0.0;
+                break;
+            case EAST:
+                xVel = 1.0 * VEL_FACTOR;
+                yVel = 0.0;
+                break;
+            case WEST:
+                xVel = -1.0 * VEL_FACTOR;
+                yVel = 0.0;
+                break;
+            default:
+                xVel = 0.0;
+                yVel = 0.0;
+                break;
+        }
     }
 }
