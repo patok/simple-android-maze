@@ -20,7 +20,7 @@ public class MazeBoard {
     private int width = 0;
     private int height = 0;
     private BoardPiece[] board = null;
-    private Player player = new Player(0,0);
+    private Player player = new Player(0.5,0.5);
 
     private Direction playerDirection = Direction.NORTH;
 
@@ -70,61 +70,43 @@ public class MazeBoard {
     // move single player
     private boolean movePlayer(Direction dir) {
         boolean moved = false;
+        int pieceXPos = (int) player.getX();
+        int pieceYPos = (int) player.getY();
         switch(dir) {
             case NORTH:
-                if (player.getY() > 0 &&
-                        (getPiece(player.getX(), player.getY()).isOpen(Direction.NORTH) &
-                         getPiece(player.getX(), player.getY()-1).isOpen(Direction.SOUTH))) {
-                    double newOffset = player.getYOffset() - Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
-                    if (1.0 > newOffset & newOffset >  -1.0) {
-                        player.setYOffset(newOffset);
-                    } else {
-                        player.setYOffset(0.0);
-                        player.setY(player.getY()-1);
-                    }
+                if ((player.getY() > (double)pieceYPos + 0.5d) ||
+                        getPiece(pieceXPos, pieceYPos).isOpen(Direction.NORTH)) {
+                    player.move(Direction.NORTH);
                     moved = true;
+                } else {
+                    player.stopOnY((double)pieceYPos + 0.5d );
                 }
                 break;
             case SOUTH:
-                if (player.getY() < getHeight()-1 &&
-                        (getPiece(player.getX(), player.getY()).isOpen(Direction.SOUTH) &
-                                getPiece(player.getX(), player.getY()+1).isOpen(Direction.NORTH))) {
-                    double newOffset = player.getYOffset() + Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
-                    if (-1.0 < newOffset & newOffset <  1.0) {
-                        player.setYOffset(newOffset);
-                    } else {
-                        player.setYOffset(0.0);
-                        player.setY(player.getY()+1);
-                    }
+                if ((player.getY() < (double)pieceYPos + 0.5d) ||
+                        getPiece(pieceXPos, pieceYPos).isOpen(Direction.SOUTH)) {
+                    player.move(Direction.SOUTH);
                     moved = true;
+                } else {
+                    player.stopOnY((double)pieceYPos + 0.5d);
                 }
                 break;
             case WEST:
-                if (player.getX() > 0 &&
-                        (getPiece(player.getX(), player.getY()).isOpen(Direction.WEST) &
-                                getPiece(player.getX()-1, player.getY()).isOpen(Direction.EAST))) {
-                    double newOffset = player.getXOffset() - Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
-                    if (1.0 > newOffset & newOffset >  -1.0) {
-                        player.setXOffset(newOffset);
-                    } else {
-                        player.setXOffset(0.0);
-                        player.setX(player.getX()-1);
-                    }
+                if ((player.getX() > (double)pieceXPos + 0.5d) ||
+                        getPiece(pieceXPos, pieceYPos).isOpen(Direction.WEST)) {
+                    player.move(Direction.WEST);
                     moved = true;
+                } else {
+                    player.stopOnX((double)pieceXPos + 0.5d);
                 }
                 break;
             case EAST:
-                if (player.getX() < getWidth()-1 &&
-                        (getPiece(player.getX(), player.getY()).isOpen(Direction.EAST) &
-                                getPiece(player.getX()+1, player.getY()).isOpen(Direction.WEST))) {
-                    double newOffset = player.getXOffset() + Player.OFFSET_VELOCITY / Player.OFFSET_STEPS;
-                    if (1.0 > newOffset & newOffset >  -1.0) {
-                        player.setXOffset(newOffset);
-                    } else {
-                        player.setXOffset(0.0);
-                        player.setX(player.getX()+1);
-                    }
+                if ( (player.getX() < (double)pieceXPos + 0.5d) ||
+                        getPiece(pieceXPos, pieceYPos).isOpen(Direction.EAST)) {
+                    player.move(Direction.EAST);
                     moved = true;
+                } else {
+                    player.stopOnX((double)pieceXPos + 0.5d);
                 }
                 break;
         }
