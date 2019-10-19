@@ -80,6 +80,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update() {
         board.update();
+        Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
     }
 
     @Override
@@ -89,8 +90,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null){
             long tileWidth = this.getWidth()/board.getWidth();
             long tileHeight = this.getHeight()/board.getHeight();
-            float x = (float) (board.getPlayer().getBoardX() * tileWidth + (tileWidth - SPRITE_WIDTH) / 2);
-            float y = (float) (board.getPlayer().getBoardY() * tileHeight + (tileHeight - SPRITE_HEIGHT)/ 2);
+            float x = (float) (board.getPlayer().getX() * tileWidth) - (SPRITE_WIDTH/2);
+            float y = (float) (board.getPlayer().getY() * tileHeight) - (SPRITE_HEIGHT/ 2);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
             int srcTop = 0;
@@ -121,7 +122,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Rect srcRect = new Rect(srcLeft, srcTop, srcRight, srcBottom);
 
             Rect dstRect = new Rect((int)x,(int)y,(int)x+SPRITE_WIDTH,(int)y+SPRITE_HEIGHT);
-            Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+            //Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
 
             canvas.drawBitmap(playerSprites, srcRect, dstRect, null);
 
