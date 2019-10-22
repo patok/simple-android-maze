@@ -33,11 +33,7 @@ public class MazeBoardActivity extends AppCompatActivity
 
     ImageView[] imageViews = null;
 
-    private MazeBoard board;
-    private String serverName;
-    private boolean isGameServer;
-    private WroupService server;
-    private WroupClient client;
+    private GameView mazeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,34 +50,36 @@ public class MazeBoardActivity extends AppCompatActivity
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
 
-        GameView mazeView = (GameView)findViewById(R.id.gameView);
+        mazeView = (GameView)findViewById(R.id.gameView);
         mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        setupMazeBoard(mazeView.getBoard());
-        serverName = getIntent().getStringExtra(this.EXTRA_SERVER_NAME);
-        isGameServer = getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false);
-        if (isGameServer){
-            server = WroupService.getInstance(this);
+        GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
+        GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
+        if (GameApp.getInstance().isGameServer()){
+            WroupService server = WroupService.getInstance(this);
             server.setDataReceivedListener(this);
             server.setClientDisconnectedListener(this);
             server.setClientConnectedListener(this);
+            GameApp.getInstance().setServer(server);
         } else {
-            client = WroupClient.getInstance(this);
+            WroupClient client = WroupClient.getInstance(this);
             client.setDataReceivedListener(this);
             client.setClientDisconnectedListener(this);
             client.setClientConnectedListener(this);
-            mazeView.setClient(client);
+            GameApp.getInstance().setClient(client);
         }
+
+        MazeBoard board = MazeBoard.from("asdasd");
+        GameApp.getInstance().setMazeBoard(board);
+        setupMazeBoard(board);
     }
 
-    // TODO this must probably be moved to GameView, or helper.
-    private void setupMazeBoard(MazeBoard theBoard) {
+    private void setupMazeBoard(MazeBoard board) {
 
-        board = theBoard;
-        int height = board.getHeight();
-        int width = board.getWidth();
+        int height = board.getVerticalTileCount();
+        int width = board.getHorizontalTileCount();
 
         imageViews = new ImageView[width * height];
 
@@ -113,7 +111,7 @@ public class MazeBoardActivity extends AppCompatActivity
 
                 row.addView(imageView);
 
-                imageViews[(j%board.getWidth())+ board.getHeight()*i] = imageView;
+                imageViews[(j%board.getHorizontalTileCount())+ board.getVerticalTileCount()*i] = imageView;
             }
         }
    }
@@ -146,18 +144,17 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        // complete with event listener logic
         if (v == buttonUp) {
-            board.setNewDirection(MazeBoard.Direction.NORTH);
+            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
         }
         else if (v == buttonDown) {
-            board.setNewDirection(MazeBoard.Direction.SOUTH);
+            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
         }
         else if (v == buttonLeft) {
-            board.setNewDirection(MazeBoard.Direction.WEST);
+            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.WEST);
         }
         else if (v == buttonRight) {
-            board.setNewDirection(MazeBoard.Direction.EAST);
+            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.EAST);
         }
 
     }

@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -15,15 +16,14 @@ import android.view.SurfaceView;
 import com.abemart.wroup.client.WroupClient;
 import com.abemart.wroup.common.messages.MessageWrapper;
 
+import java.util.Vector;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private static final int SPRITE_HEIGHT = 72;
-    private static final int SPRITE_WIDTH = 52;
     private GameAnimationThread thread;
-
-    private MazeBoard board;
-    private Bitmap playerSprites;
-    private WroupClient client;
+    private Player player;
+    private Vector<Player> players;
+    private PlayerSprite playerSprites;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,24 +41,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void init() {
-        board = MazeBoard.from("some repl");
         getHolder().addCallback(this);
 
-        playerSprites = BitmapFactory.decodeResource(getResources(), R.drawable.characters);
+        String id = Settings.Secure.getString(getContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        player = new Player(id,0.5,0.5);
 
-        Log.d("BITMAP:", String.format("metadata -bytes: %d - size: %d x %d",
-                playerSprites.getByteCount(), playerSprites.getWidth(), playerSprites.getHeight()));
+        playerSprites = new PlayerSprite(getResources());
 
         thread = new GameAnimationThread(getHolder(), this);
         setFocusable(true);
     }
 
-    public MazeBoard getBoard() {
-        return board;
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        //init();
         thread.setRunning(true);
         thread.start();
     }
@@ -83,65 +84,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        board.update();
+        // TODO update all players
+        MazeBoard board = GameApp.getInstance().getMazeBoard();
+        player.move(board);
 /*
+        // TODO send coordinates
         if (client != null){
             MessageWrapper message = new MessageWrapper();
             message.setMessage(String.format("position: %f2.2,%f2.2", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
             message.setMessageType(MessageWrapper.MessageType.NORMAL);
             client.sendMessageToServer(message);
         }
-*/
+
         Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
+*/
     }
 
+    // FIXME support multiple players
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
-
+        MazeBoard board = GameApp.getInstance().getMazeBoard();
         if (canvas != null){
-            long tileWidth = this.getWidth()/board.getWidth();
-            long tileHeight = this.getHeight()/board.getHeight();
-            float x = (float) (board.getPlayer().getX() * tileWidth) - (SPRITE_WIDTH/2);
-            float y = (float) (board.getPlayer().getY() * tileHeight) - (SPRITE_HEIGHT/ 2);
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-            int srcTop = 0;
-            int srcLeft = 0;
-            int srcRight = 0;
-            int srcBottom = 0;
-            int[] spriteOffset = { SPRITE_WIDTH *6, SPRITE_WIDTH*7, SPRITE_WIDTH*8, SPRITE_WIDTH*7, SPRITE_WIDTH*6};
-            switch (board.getPlayerDirection()){
-                case WEST:
-                    srcTop = SPRITE_HEIGHT;
-                    srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
-                    break;
-                case NORTH:
-                    srcTop = SPRITE_HEIGHT * 3;
-                    srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
-                    break;
-                case EAST:
-                    srcTop = SPRITE_HEIGHT * 2;
-                    srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
-                    break;
-                case SOUTH:
-                    srcTop = 0;
-                    srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
-                    break;
-            }
-            srcBottom = srcTop + SPRITE_HEIGHT;
-            srcRight = srcLeft + SPRITE_WIDTH;
-            Rect srcRect = new Rect(srcLeft, srcTop, srcRight, srcBottom);
-
-            Rect dstRect = new Rect((int)x,(int)y,(int)x+SPRITE_WIDTH,(int)y+SPRITE_HEIGHT);
-            //Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
-
-            canvas.drawBitmap(playerSprites, srcRect, dstRect, null);
-
+            Rect srcRect = playerSprites.getSourceRectangle(this, board, player, 0);
+            Rect dstRect = playerSprites.getDestinationRectangle(this, board, player);
+            Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+            canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
         }
-    }
-
-    public void setClient(WroupClient client) {
-        this.client = client;
     }
 }
