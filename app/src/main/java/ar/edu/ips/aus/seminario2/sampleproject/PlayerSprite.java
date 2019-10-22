@@ -11,6 +11,16 @@ class PlayerSprite {
     private static final String TAG = PlayerSprite.class.getSimpleName();
     private static final int SPRITE_HEIGHT = 72;
     private static final int SPRITE_WIDTH = 52;
+    private static final int[][] SPRITE_ORIGIN = new int[][]{
+            {0,SPRITE_WIDTH * 6}, // skeleton
+            {0,0},
+            {0,SPRITE_WIDTH * 3},
+            {0,SPRITE_WIDTH * 9},
+            {SPRITE_HEIGHT * 4, 0},
+            {SPRITE_HEIGHT * 4, SPRITE_WIDTH * 3},
+            {SPRITE_HEIGHT * 4, SPRITE_WIDTH * 6},
+            {SPRITE_HEIGHT * 4, SPRITE_WIDTH * 9},
+    };
 
     private final Bitmap sprites;
 
@@ -31,26 +41,26 @@ class PlayerSprite {
         float x = (float) (player.getX() * tileWidth) - (SPRITE_WIDTH/2);
         float y = (float) (player.getY() * tileHeight) - (SPRITE_HEIGHT/ 2);
 
-        int srcTop = 0;
-        int srcLeft = 0;
+        int srcTop = SPRITE_ORIGIN[order][0];
+        int srcLeft = SPRITE_ORIGIN[order][1];
         int srcRight = 0;
         int srcBottom = 0;
-        int[] spriteOffset = { SPRITE_WIDTH *6, SPRITE_WIDTH*7, SPRITE_WIDTH*8, SPRITE_WIDTH*7, SPRITE_WIDTH*6};
+        int[] spriteOffset = { srcLeft, srcLeft+SPRITE_WIDTH, srcLeft+2*SPRITE_WIDTH, srcLeft+SPRITE_WIDTH, srcLeft};
         switch (player.getDirection()){
             case WEST:
-                srcTop = SPRITE_HEIGHT;
+                srcTop = srcTop + SPRITE_HEIGHT;
                 srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
                 break;
             case NORTH:
-                srcTop = SPRITE_HEIGHT * 3;
+                srcTop = srcTop + SPRITE_HEIGHT * 3;
                 srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
                 break;
             case EAST:
-                srcTop = SPRITE_HEIGHT * 2;
+                srcTop = srcTop + SPRITE_HEIGHT * 2;
                 srcLeft = spriteOffset[(int) (x % spriteOffset.length)];
                 break;
             case SOUTH:
-                srcTop = 0;
+                srcTop = srcTop;
                 srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
                 break;
             case NONE:

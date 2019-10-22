@@ -107,7 +107,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         MazeBoard board = GameApp.getInstance().getMazeBoard();
         if (canvas != null){
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            Rect srcRect = playerSprites.getSourceRectangle(this, board, player, 0);
+            Rect srcRect = playerSprites.getSourceRectangle(this, board, player, 2);
             Rect dstRect = playerSprites.getDestinationRectangle(this, board, player);
             Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
             canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
