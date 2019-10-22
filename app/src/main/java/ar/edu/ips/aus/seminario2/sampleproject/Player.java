@@ -12,7 +12,7 @@ public class Player {
     private double y;
     private double xVel = 0.0;
     private double yVel = 0.0;
-    private final static double VEL_FACTOR = 0.02;
+    private final static double VEL_FACTOR = 0.04;
 
     public Player(String id, double x, double y) {
         this.ID = id;
