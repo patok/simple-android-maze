@@ -182,6 +182,9 @@ public class MazeBoardActivity extends AppCompatActivity
     @Override
     public void onDataReceived(MessageWrapper messageWrapper) {
         // TODO implement data received handler
-        Log.d(TAG, messageWrapper.getMessage());
+        if (!GameApp.getInstance().isGameServer()) {
+            Log.d(TAG, messageWrapper.getMessage());
+        }
+
     }
 }
