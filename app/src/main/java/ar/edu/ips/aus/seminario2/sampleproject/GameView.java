@@ -16,13 +16,14 @@ import android.view.SurfaceView;
 import com.abemart.wroup.client.WroupClient;
 import com.abemart.wroup.common.messages.MessageWrapper;
 
+import java.util.Random;
 import java.util.Vector;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameAnimationThread thread;
     private Player player;
-    private Vector<Player> players;
+    private Vector<Player> players = new Vector<>();
     private PlayerSprite playerSprites;
 
     public GameView(Context context, AttributeSet attrs) {
@@ -46,6 +47,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         String id = Settings.Secure.getString(getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         player = new Player(id,0.5,0.5);
+        Player player2 = new Player("XXXX", 2.5, 2.5);
+        player2.setNewDirection(MazeBoard.Direction.NORTH);
+        Player player3 = new Player("XXXX", 0, 2.5);
+        player3.setNewDirection(MazeBoard.Direction.NORTH);
+
+        players.add(player);
+        players.add(player2);
+        players.add(player3);
 
         playerSprites = new PlayerSprite(getResources());
 
@@ -86,7 +95,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         // TODO update all players
         MazeBoard board = GameApp.getInstance().getMazeBoard();
-        player.move(board);
+        Random rand = new Random();
+        MazeBoard.Direction[] values = MazeBoard.Direction.values();
+        for (Player p:this.players) {
+            // randomly update other players
+            if (p != this.player &&
+                p.getDirection() == MazeBoard.Direction.NONE){
+                    p.setNewDirection(values[rand.nextInt(values.length)]);
+            }
+            p.move(board);
+        }
 /*
         // TODO send coordinates
         if (client != null){
@@ -100,17 +118,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 */
     }
 
-    // FIXME support multiple players
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
-        MazeBoard board = GameApp.getInstance().getMazeBoard();
+
         if (canvas != null){
+            MazeBoard board = GameApp.getInstance().getMazeBoard();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            Rect srcRect = playerSprites.getSourceRectangle(this, board, player, 2);
-            Rect dstRect = playerSprites.getDestinationRectangle(this, board, player);
-            Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
-            canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
+            int count = 0;
+            for (Player p:this.players) {
+                Rect srcRect = playerSprites.getSourceRectangle(this, board, p, count);
+                Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
+                Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+                canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
+                count++;
+            }
         }
     }
 }
