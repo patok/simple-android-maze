@@ -47,9 +47,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         String id = Settings.Secure.getString(getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         player = new Player(id,0.5,0.5);
-        Player player2 = new Player("XXXX", 2.5, 2.5);
+        Player player2 = new Player("NNNN", 8.5, 8.5);
         player2.setNewDirection(MazeBoard.Direction.NORTH);
-        Player player3 = new Player("XXXX", 0, 2.5);
+        Player player3 = new Player("ZZZZ", 0, 8.5);
         player3.setNewDirection(MazeBoard.Direction.NORTH);
 
         players.add(player);
