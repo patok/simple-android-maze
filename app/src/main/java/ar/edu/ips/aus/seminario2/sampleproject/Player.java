@@ -1,24 +1,22 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 public class Player {
-    public static final double OFFSET_VELOCITY = 5.0;
-    public static final double OFFSET_STEPS = 100.0;
-    public static final float TOKEN_RADIUS = 15;
-    private int x;
-    private int y;
-    private double yOffset = 0.0;
-    private double xOffset = 0.0;
+    private double x;
+    private double y;
+    private double xVel = 0.0;
+    private double yVel = 0.0;
+    private static double VEL_FACTOR = 0.02;
 
-    public Player(int x, int y) {
+    public Player(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -30,27 +28,60 @@ public class Player {
         this.y = y;
     }
 
-    public double getYOffset() {
-        return this.yOffset;
+    public double getXVel() {
+        return xVel;
     }
 
-    public void setYOffset(double offset) {
-        this.yOffset = offset;
+    public void setXVel(double xVel) {
+        this.xVel = xVel;
     }
 
-    public double getBoardX() {
-        return this.xOffset + this.x;
+    public double getYVel() {
+        return yVel;
     }
 
-    public double getBoardY() {
-        return this.yOffset + this.y;
+    public void setYVel(double yVel) {
+        this.yVel = yVel;
     }
 
-    public double getXOffset() {
-        return this.xOffset;
+    public void move(MazeBoard.Direction direction) {
+        switch (direction){
+            case NORTH:
+                this.yVel = -1.0 * VEL_FACTOR;
+                this.xVel = 0.0;
+                break;
+            case SOUTH:
+                this.yVel = 1.0 * VEL_FACTOR;
+                this.xVel = 0.0;
+                break;
+            case EAST:
+                this.yVel = 0.0;
+                this.xVel = 1.0 * VEL_FACTOR;
+                break;
+            case WEST:
+                this.yVel = 0.0;
+                this.xVel = -1.0 * VEL_FACTOR;
+                break;
+            default:
+                this.yVel = 0.0;
+                this.xVel = 0.0;
+                break;
+        }
+        this.move();
     }
 
-    public void setXOffset(double offset) {
-        this.xOffset = offset;
+    public void move() {
+        this.x = this.x + this.xVel;
+        this.y = this.y + this.yVel;
+    }
+
+    public void stopOnX(double x) {
+        this.x = x;
+        this.xVel = 0.0;
+    }
+
+    public void stopOnY(double y) {
+        this.y = y;
+        this.yVel = 0.0;
     }
 }

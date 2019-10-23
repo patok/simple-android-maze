@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,6 +25,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent creationIntent = getIntent();
+        String playerName = creationIntent.getStringExtra("PLAYER");
+        if (playerName == null) {
+            playerName = "Unknown player";
+        }
+        // TODO make Toast
+        String welcomeMessagem = String.format("Bienvenido al laberinto %s", playerName);
+        Toast.makeText(this, welcomeMessagem, Toast.LENGTH_LONG).show();
+
         setContentView(R.layout.maze);
 
         buttonUp = findViewById(R.id.buttonUp);
