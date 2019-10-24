@@ -43,13 +43,13 @@ public class GameAnimationThread extends Thread {
                     intervalCount = 0;
                 }
             } catch (Exception e){
-                // intenttionally left blank
+                Log.d("GAT", e.getMessage());
             } finally {
                 if (canvas != null ){
                     try {
                         this.surfaceHolder.unlockCanvasAndPost(canvas);
                     } catch (Exception e){
-                        e.printStackTrace();
+                        Log.d("GAT", e.getMessage());
                     }
                 }
             }
