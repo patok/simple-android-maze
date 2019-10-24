@@ -20,6 +20,8 @@ import com.abemart.wroup.common.listeners.ClientDisconnectedListener;
 import com.abemart.wroup.common.listeners.DataReceivedListener;
 import com.abemart.wroup.common.messages.MessageWrapper;
 import com.abemart.wroup.service.WroupService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class MazeBoardActivity extends AppCompatActivity
         implements View.OnClickListener, DataReceivedListener,
@@ -182,6 +184,11 @@ public class MazeBoardActivity extends AppCompatActivity
     @Override
     public void onDataReceived(MessageWrapper messageWrapper) {
         // TODO implement data received handler
-        Log.d(TAG, messageWrapper.getMessage());
+        if (!GameApp.getInstance().isGameServer()) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonOutput = gson.toJson(messageWrapper.getMessage());
+            Log.d(TAG, jsonOutput);
+        }
+
     }
 }

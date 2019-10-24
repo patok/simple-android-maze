@@ -15,6 +15,8 @@ import android.view.SurfaceView;
 
 import com.abemart.wroup.client.WroupClient;
 import com.abemart.wroup.common.messages.MessageWrapper;
+import com.abemart.wroup.service.WroupService;
+import com.google.gson.Gson;
 
 import java.util.Random;
 import java.util.Vector;
@@ -105,17 +107,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             p.move(board);
         }
-/*
-        // TODO send coordinates
-        if (client != null){
-            MessageWrapper message = new MessageWrapper();
-            message.setMessage(String.format("position: %f2.2,%f2.2", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
-            message.setMessageType(MessageWrapper.MessageType.NORMAL);
-            client.sendMessageToServer(message);
-        }
 
-        Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
-*/
+        // TODO send coordinates
+        if (GameApp.getInstance().isGameServer()) {
+            WroupService server = GameApp.getInstance().getServer();
+            MessageWrapper message = new MessageWrapper();
+            Gson json = new Gson();
+            String msg = json.toJson(players.toArray(new Player[]{}));
+            message.setMessage(msg);
+            message.setMessageType(MessageWrapper.MessageType.NORMAL);
+            server.sendMessageToAllClients(message);
+        } else {
+
+        }
+        //Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
     }
 
     @Override
