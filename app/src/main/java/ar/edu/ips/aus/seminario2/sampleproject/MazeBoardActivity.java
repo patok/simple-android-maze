@@ -23,6 +23,9 @@ import com.abemart.wroup.service.WroupService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MazeBoardActivity extends AppCompatActivity
         implements View.OnClickListener, DataReceivedListener,
         ClientConnectedListener, ClientDisconnectedListener {
@@ -30,12 +33,14 @@ public class MazeBoardActivity extends AppCompatActivity
     public static final String EXTRA_SERVER_NAME = "SERVER_NAME";
     public static final String EXTRA_IS_SERVER = "IS_SERVER";
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
+    private static final int MAX_DEVICES = 2;
 
     private Button buttonUp, buttonDown, buttonLeft, buttonRight;
 
     ImageView[] imageViews = null;
 
     private GameView mazeView;
+    private final HashMap<String, WroupDevice> devices = new HashMap<String, WroupDevice>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +168,9 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onClientConnected(final WroupDevice wroupDevice) {
+        if (GameApp.getInstance().isGameServer())
+            addToDeviceList(wroupDevice);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -173,6 +181,9 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onClientDisconnected(final WroupDevice wroupDevice) {
+        if (GameApp.getInstance().isGameServer())
+            removeFromDeviceList(wroupDevice);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -181,13 +192,29 @@ public class MazeBoardActivity extends AppCompatActivity
         });
     }
 
+    private boolean addToDeviceList(WroupDevice wroupDevice) {
+        if (devices.size() < MAX_DEVICES) {
+            devices.put(wroupDevice.getDeviceMac(), wroupDevice);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean removeFromDeviceList(WroupDevice wroupDevice) {
+        return (devices.remove(wroupDevice.getDeviceMac()) != null);
+    }
+
     @Override
     public void onDataReceived(MessageWrapper messageWrapper) {
         // TODO implement data received handler
         if (!GameApp.getInstance().isGameServer()) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String jsonOutput = gson.toJson(messageWrapper.getMessage());
-            Log.d(TAG, jsonOutput);
+            // received all players data update
+            mazeView.updatePlayerData(messageWrapper.getMessage());
+        } else {
+            // received individual player data
+            if (devices.containsKey(messageWrapper.getWroupDevice().getDeviceMac())){
+                mazeView.updatePlayerData(messageWrapper.getMessage());
+            }
         }
 
     }

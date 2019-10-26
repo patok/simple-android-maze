@@ -18,6 +18,8 @@ import com.abemart.wroup.common.messages.MessageWrapper;
 import com.abemart.wroup.service.WroupService;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
@@ -25,7 +27,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameAnimationThread thread;
     private Player player;
-    private Vector<Player> players = new Vector<>();
+    private Map<String, Player> players = new HashMap<>();
     private PlayerSprite playerSprites;
 
     public GameView(Context context, AttributeSet attrs) {
@@ -49,14 +51,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         String id = Settings.Secure.getString(getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         player = new Player(id,0.5,0.5);
-        Player player2 = new Player("NNNN", 8.5, 8.5);
-        player2.setNewDirection(MazeBoard.Direction.NORTH);
-        Player player3 = new Player("ZZZZ", 0, 8.5);
-        player3.setNewDirection(MazeBoard.Direction.NORTH);
+//        Player player2 = new Player("NNNN", 8.5, 8.5);
+//        player2.setNewDirection(MazeBoard.Direction.NORTH);
 
-        players.add(player);
-        players.add(player2);
-        players.add(player3);
+        players.put(id, player);
+//        players.put(player2.getID(), player2);
 
         playerSprites = new PlayerSprite(getResources());
 
@@ -99,26 +98,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         MazeBoard board = GameApp.getInstance().getMazeBoard();
         Random rand = new Random();
         MazeBoard.Direction[] values = MazeBoard.Direction.values();
-        for (Player p:this.players) {
-            // randomly update other players
-            if (p != this.player &&
-                p.getDirection() == MazeBoard.Direction.NONE){
-                    p.setNewDirection(values[rand.nextInt(values.length)]);
-            }
+        for (Player p:this.players.values()) {
             p.move(board);
         }
 
-        // TODO send coordinates
+        // TODO send all players data
         if (GameApp.getInstance().isGameServer()) {
             WroupService server = GameApp.getInstance().getServer();
             MessageWrapper message = new MessageWrapper();
             Gson json = new Gson();
-            String msg = json.toJson(players.toArray(new Player[]{}));
+            String msg = json.toJson(players.values().toArray(new Player[]{}));
             message.setMessage(msg);
             message.setMessageType(MessageWrapper.MessageType.NORMAL);
             server.sendMessageToAllClients(message);
         } else {
-
+            // TODO send own player data
+            WroupClient client = GameApp.getInstance().getClient();
+            MessageWrapper message = new MessageWrapper();
+            Gson json = new Gson();
+            String msg = json.toJson(new Player[]{player});
+            message.setMessage(msg);
+            message.setMessageType(MessageWrapper.MessageType.NORMAL);
+            client.sendMessageToServer(message);
         }
         //Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
     }
@@ -131,12 +132,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             MazeBoard board = GameApp.getInstance().getMazeBoard();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             int count = 0;
-            for (Player p:this.players) {
+            for (Player p:this.players.values()) {
                 Rect srcRect = playerSprites.getSourceRectangle(this, board, p, count);
                 Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
                 Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
                 canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
                 count++;
+            }
+        }
+    }
+
+    public void updatePlayerData(String message) {
+        Gson gson = new Gson();
+        Player[] playerData = gson.fromJson(message, Player[].class);
+        for (Player pd:playerData) {
+            if (player.getID() != pd.getID()) {
+                Player p = players.get(pd.getID());
+                if (p == null) {
+                    p = new Player(pd.getID(), pd.getX(), pd.getY());
+                    players.put(pd.getID(), p);
+                }
+                p.setX(pd.getX());
+                p.setY(pd.getY());
+                p.setXVel(pd.getXVel());
+                p.setYVel(pd.getYVel());
             }
         }
     }
