@@ -11,4 +11,5 @@
     <string name="prgrss_connecting_to_group">Conectando con servidor ...</string>
     <string name="device_connected">%s dispositivo conectado</string>
     <string name="device_disconnected">%s dispositivo desconectado</string>
+    <string name="pause">PAUSE</string>
 </resources>

@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.util.Random;
+
 class PlayerSprite {
 
     private static final String TAG = PlayerSprite.class.getSimpleName();
@@ -34,15 +36,15 @@ class PlayerSprite {
         return sprites;
     }
 
-    public Rect getSourceRectangle(GameView view, MazeBoard board, Player player, int order){
+    public Rect getSourceRectangle(GameView view, MazeBoard board, Player player, int spriteNumber){
         float tileWidth = view.getWidth()/board.getHorizontalTileCount();
         float tileHeight = view.getHeight()/board.getVerticalTileCount();
 
         float x = (float) (player.getX() * tileWidth) - (SPRITE_WIDTH/2);
         float y = (float) (player.getY() * tileHeight) - (SPRITE_HEIGHT/ 2);
 
-        int srcTop = SPRITE_ORIGIN[order][0];
-        int srcLeft = SPRITE_ORIGIN[order][1];
+        int srcTop = SPRITE_ORIGIN[spriteNumber][0];
+        int srcLeft = SPRITE_ORIGIN[spriteNumber][1];
         int srcRight = 0;
         int srcBottom = 0;
         int[] spriteOffset = { srcLeft, srcLeft+SPRITE_WIDTH, srcLeft+2*SPRITE_WIDTH, srcLeft+SPRITE_WIDTH, srcLeft};
@@ -81,5 +83,10 @@ class PlayerSprite {
         float y = (float) (player.getY() * tileHeight) - (SPRITE_HEIGHT/ 2);
 
         return new Rect((int)x,(int)y,(int)x+SPRITE_WIDTH,(int)y+SPRITE_HEIGHT);
+    }
+
+    public int getRandomSpriteNumber(){
+        Random random = new Random();
+        return random.nextInt(SPRITE_ORIGIN.length);
     }
 }

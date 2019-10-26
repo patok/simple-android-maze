@@ -1,5 +1,7 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.util.Log;
+
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.EAST;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NONE;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NORTH;
@@ -7,12 +9,14 @@ import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.SOUTH;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.WEST;
 
 public class Player {
+    private static final String TAG = Player.class.getSimpleName();
     private final String ID;
     private double x;
     private double y;
     private double xVel = 0.0;
     private double yVel = 0.0;
-    private final static double VEL_FACTOR = 0.04;
+    private final static double VEL_FACTOR = 500000000;
+    private int order;
 
     public Player(String id, double x, double y) {
         this.ID = id;
@@ -32,11 +36,11 @@ public class Player {
         return y;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -56,7 +60,8 @@ public class Player {
         this.yVel = yVel;
     }
 
-    public boolean move(MazeBoard board) {
+    // calculate player position based on previous position, velocity and time period.
+    public boolean move(MazeBoard board, long delta) {
         boolean moved = false;
         int pieceXPos = (int) getX();
         int pieceYPos = (int) getY();
@@ -68,7 +73,7 @@ public class Player {
             case NORTH:
                 if ((getY() > (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(NORTH)) {
-                    this.computeMovement();
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d );
@@ -77,7 +82,7 @@ public class Player {
             case SOUTH:
                 if ((getY() < (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(MazeBoard.Direction.SOUTH)) {
-                    this.computeMovement();
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d);
@@ -86,7 +91,7 @@ public class Player {
             case WEST:
                 if ((getX() > (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(WEST)) {
-                    this.computeMovement();
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -95,7 +100,7 @@ public class Player {
             case EAST:
                 if ( (getX() < (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(EAST)) {
-                    this.computeMovement();
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -117,9 +122,10 @@ public class Player {
         return NONE;
     }
 
-    private void computeMovement() {
-        this.x = this.x + this.xVel;
-        this.y = this.y + this.yVel;
+    private void computeMovement(long delta) {
+        this.x = this.x + this.xVel * delta / VEL_FACTOR;
+        this.y = this.y + this.yVel * delta / VEL_FACTOR;
+        Log.d(TAG, String.format("position: %2.2f,%2.2f", this.x, this.y));
     }
 
     private void stopOnX(double x) {
@@ -135,19 +141,19 @@ public class Player {
     public void setNewDirection(MazeBoard.Direction direction) {
         switch (direction){
             case NORTH:
-                yVel = -1.0 * VEL_FACTOR;
+                yVel = -1.0;
                 xVel = 0.0;
                 break;
             case SOUTH:
-                yVel = 1.0 * VEL_FACTOR;
+                yVel = 1.0;
                 xVel = 0.0;
                 break;
             case EAST:
-                xVel = 1.0 * VEL_FACTOR;
+                xVel = 1.0;
                 yVel = 0.0;
                 break;
             case WEST:
-                xVel = -1.0 * VEL_FACTOR;
+                xVel = -1.0;
                 yVel = 0.0;
                 break;
             default:
@@ -155,5 +161,13 @@ public class Player {
                 yVel = 0.0;
                 break;
         }
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public int getOrder() {
+        return this.order;
     }
 }
