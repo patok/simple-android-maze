@@ -5,10 +5,12 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class GameAnimationThread extends Thread {
+    private static final String TAG = GameAnimationThread.class.getSimpleName();
     private SurfaceHolder surfaceHolder;
     private GameView gameView;
     private boolean running;
     public static Canvas canvas;
+    private static int ANIMATION_DELAY_MS = 10;
 
     public GameAnimationThread(SurfaceHolder surfaceHolder, GameView gameView){
         super();
@@ -23,33 +25,33 @@ public class GameAnimationThread extends Thread {
         long startWhen = System.nanoTime();
         int intervalCount = 0;
 
+        long previousTick = startWhen;
         while (running){
             canvas = null;
-
+            long now = System.nanoTime();
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
-                    // TODO call board.update() instead
-                    this.gameView.update();
+                    this.gameView.update(now-previousTick);
                     this.gameView.draw(canvas);
                 }
-                Thread.sleep(10);
+                previousTick = now;
+                Thread.sleep(ANIMATION_DELAY_MS);
                 intervalCount++;
                 if (COUNT_INTERVAL <= intervalCount){
-                    long now = System.nanoTime();
                     double framesPerSec = 1000000000.0 / ((now - startWhen) / (intervalCount));
-                    Log.d("FPS", String.format("%2.2f", framesPerSec));
+                    Log.d(TAG, String.format("FPS: %2.2f", framesPerSec));
                     startWhen = now;
                     intervalCount = 0;
                 }
             } catch (Exception e){
-                Log.d("GAT", e.getMessage());
+                Log.d(TAG, e.getMessage());
             } finally {
                 if (canvas != null ){
                     try {
                         this.surfaceHolder.unlockCanvasAndPost(canvas);
                     } catch (Exception e){
-                        Log.d("GAT", e.getMessage());
+                        Log.d(TAG, e.getMessage());
                     }
                 }
             }

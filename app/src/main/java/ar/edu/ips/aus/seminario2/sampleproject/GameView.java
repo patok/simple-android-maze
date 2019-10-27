@@ -92,10 +92,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() {
+    public void update(long delay) {
         MazeBoard board = GameApp.getInstance().getMazeBoard();
         // update only actual player
-        player.move(board);
+        player.move(board, delay);
         this.moves++;
 
         // send all players data
@@ -121,7 +121,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 client.sendMessageToServer(message);
             }
         }
-        //Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
     }
 
     @Override

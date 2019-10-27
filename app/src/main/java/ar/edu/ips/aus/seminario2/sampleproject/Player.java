@@ -1,5 +1,7 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.util.Log;
+
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.EAST;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NONE;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.NORTH;
@@ -7,12 +9,13 @@ import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.SOUTH;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.WEST;
 
 public class Player {
+    private static final String TAG = Player.class.getSimpleName();
     private final String ID;
     private double x;
     private double y;
     private double xVel = 0.0;
     private double yVel = 0.0;
-    private final static double VEL_FACTOR = 0.04;
+    private final static double VEL_FACTOR = 500000000;
     private int order;
 
     public Player(String id, double x, double y) {
@@ -57,7 +60,7 @@ public class Player {
         this.yVel = yVel;
     }
 
-    public boolean move(MazeBoard board) {
+    public boolean move(MazeBoard board, long delay) {
         boolean moved = false;
         int pieceXPos = (int) getX();
         int pieceYPos = (int) getY();
@@ -69,7 +72,7 @@ public class Player {
             case NORTH:
                 if ((getY() > (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(NORTH)) {
-                    this.computeMovement();
+                    this.computeMovement(delay);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d );
@@ -78,7 +81,7 @@ public class Player {
             case SOUTH:
                 if ((getY() < (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(MazeBoard.Direction.SOUTH)) {
-                    this.computeMovement();
+                    this.computeMovement(delay);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d);
@@ -87,7 +90,7 @@ public class Player {
             case WEST:
                 if ((getX() > (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(WEST)) {
-                    this.computeMovement();
+                    this.computeMovement(delay);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -96,7 +99,7 @@ public class Player {
             case EAST:
                 if ( (getX() < (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(EAST)) {
-                    this.computeMovement();
+                    this.computeMovement(delay);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -118,10 +121,10 @@ public class Player {
         return NONE;
     }
 
-    // FIXME deal with diff time tics devices
-    private void computeMovement() {
-        this.x = this.x + this.xVel;
-        this.y = this.y + this.yVel;
+    private void computeMovement(long delay) {
+        this.x = this.x + this.xVel * delay / VEL_FACTOR;
+        this.y = this.y + this.yVel * delay / VEL_FACTOR;
+        Log.d(TAG, String.format("position: %2.2f,%2.2f", this.x, this.y));
     }
 
     private void stopOnX(double x) {
@@ -137,19 +140,19 @@ public class Player {
     public void setNewDirection(MazeBoard.Direction direction) {
         switch (direction){
             case NORTH:
-                yVel = -1.0 * VEL_FACTOR;
+                yVel = -1.0;
                 xVel = 0.0;
                 break;
             case SOUTH:
-                yVel = 1.0 * VEL_FACTOR;
+                yVel = 1.0;
                 xVel = 0.0;
                 break;
             case EAST:
-                xVel = 1.0 * VEL_FACTOR;
+                xVel = 1.0;
                 yVel = 0.0;
                 break;
             case WEST:
-                xVel = -1.0 * VEL_FACTOR;
+                xVel = -1.0;
                 yVel = 0.0;
                 break;
             default:
