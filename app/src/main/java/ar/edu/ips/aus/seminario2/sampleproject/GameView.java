@@ -29,6 +29,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Player player;
     private Map<String, Player> players = new HashMap<>();
     private PlayerSprite playerSprites;
+    private int moves = 0;
+    private static final int SERVER_UPDATE_RATIO = 3;
+    private static final int CLIENT_UPDATE_RATIO = 2;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -93,25 +96,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         MazeBoard board = GameApp.getInstance().getMazeBoard();
         // update only actual player
         player.move(board);
+        this.moves++;
 
         // send all players data
         if (GameApp.getInstance().isGameServer()) {
-            WroupService server = GameApp.getInstance().getServer();
-            MessageWrapper message = new MessageWrapper();
-            Gson json = new Gson();
-            String msg = json.toJson(players.values().toArray(new Player[]{}));
-            message.setMessage(msg);
-            message.setMessageType(MessageWrapper.MessageType.NORMAL);
-            server.sendMessageToAllClients(message);
+            if (this.moves % SERVER_UPDATE_RATIO == 0) {
+                WroupService server = GameApp.getInstance().getServer();
+                MessageWrapper message = new MessageWrapper();
+                Gson json = new Gson();
+                String msg = json.toJson(players.values().toArray(new Player[]{}));
+                message.setMessage(msg);
+                message.setMessageType(MessageWrapper.MessageType.NORMAL);
+                server.sendMessageToAllClients(message);
+            }
         } else {
-            // send player data
-            WroupClient client = GameApp.getInstance().getClient();
-            MessageWrapper message = new MessageWrapper();
-            Gson json = new Gson();
-            String msg = json.toJson(new Player[]{player});
-            message.setMessage(msg);
-            message.setMessageType(MessageWrapper.MessageType.NORMAL);
-            client.sendMessageToServer(message);
+            if (this.moves % CLIENT_UPDATE_RATIO == 0) {
+                // send player data
+                WroupClient client = GameApp.getInstance().getClient();
+                MessageWrapper message = new MessageWrapper();
+                Gson json = new Gson();
+                String msg = json.toJson(new Player[]{player});
+                message.setMessage(msg);
+                message.setMessageType(MessageWrapper.MessageType.NORMAL);
+                client.sendMessageToServer(message);
+            }
         }
         //Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
     }
@@ -140,13 +148,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 Player p = players.get(pd.getID());
                 if (p == null) {
                     p = new Player(pd.getID(), pd.getX(), pd.getY());
+                    p.setOrder(pd.getOrder());
                     players.put(pd.getID(), p);
                 }
                 p.setX(pd.getX());
                 p.setY(pd.getY());
                 p.setXVel(pd.getXVel());
                 p.setYVel(pd.getYVel());
-                p.setOrder(pd.getOrder());
             }
         }
     }
