@@ -69,7 +69,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        //init();
         thread.setRunning(true);
         thread.start();
     }
@@ -94,15 +93,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        // TODO update all players
         MazeBoard board = GameApp.getInstance().getMazeBoard();
-        Random rand = new Random();
-        MazeBoard.Direction[] values = MazeBoard.Direction.values();
-        for (Player p:this.players.values()) {
-            p.move(board);
-        }
+        // update only actual player
+        player.move(board);
 
-        // TODO send all players data
+        // send all players data
         if (GameApp.getInstance().isGameServer()) {
             WroupService server = GameApp.getInstance().getServer();
             MessageWrapper message = new MessageWrapper();
@@ -112,7 +107,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             message.setMessageType(MessageWrapper.MessageType.NORMAL);
             server.sendMessageToAllClients(message);
         } else {
-            // TODO send own player data
+            // send player data
             WroupClient client = GameApp.getInstance().getClient();
             MessageWrapper message = new MessageWrapper();
             Gson json = new Gson();
@@ -146,7 +141,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Gson gson = new Gson();
         Player[] playerData = gson.fromJson(message, Player[].class);
         for (Player pd:playerData) {
-            if (player.getID() != pd.getID()) {
+            if (!player.getID().equals(pd.getID())) {
                 Player p = players.get(pd.getID());
                 if (p == null) {
                     p = new Player(pd.getID(), pd.getX(), pd.getY());
