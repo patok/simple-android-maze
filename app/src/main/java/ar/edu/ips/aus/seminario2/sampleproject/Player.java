@@ -13,6 +13,7 @@ public class Player {
     private double xVel = 0.0;
     private double yVel = 0.0;
     private final static double VEL_FACTOR = 0.04;
+    private int order;
 
     public Player(String id, double x, double y) {
         this.ID = id;
@@ -117,6 +118,7 @@ public class Player {
         return NONE;
     }
 
+    // FIXME deal with diff time tics devices
     private void computeMovement() {
         this.x = this.x + this.xVel;
         this.y = this.y + this.yVel;
@@ -155,5 +157,13 @@ public class Player {
                 yVel = 0.0;
                 break;
         }
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public int getOrder() {
+        return this.order;
     }
 }

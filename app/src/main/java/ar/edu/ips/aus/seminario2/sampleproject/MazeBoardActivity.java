@@ -33,7 +33,7 @@ public class MazeBoardActivity extends AppCompatActivity
     public static final String EXTRA_SERVER_NAME = "SERVER_NAME";
     public static final String EXTRA_IS_SERVER = "IS_SERVER";
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
-    private static final int MAX_DEVICES = 2;
+    private static final int MAX_DEVICES = 3;
 
     private Button buttonUp, buttonDown, buttonLeft, buttonRight;
 

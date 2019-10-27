@@ -51,13 +51,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         String id = Settings.Secure.getString(getContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         player = new Player(id,0.5,0.5);
-//        Player player2 = new Player("NNNN", 8.5, 8.5);
-//        player2.setNewDirection(MazeBoard.Direction.NORTH);
-
         players.put(id, player);
-//        players.put(player2.getID(), player2);
 
         playerSprites = new PlayerSprite(getResources());
+        player.setOrder(playerSprites.getRandomSpriteNumber());
 
         thread = new GameAnimationThread(getHolder(), this);
         setFocusable(true);
@@ -126,13 +123,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null){
             MazeBoard board = GameApp.getInstance().getMazeBoard();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            int count = 0;
             for (Player p:this.players.values()) {
-                Rect srcRect = playerSprites.getSourceRectangle(this, board, p, count);
+                Rect srcRect = playerSprites.getSourceRectangle(this, board, p, p.getOrder());
                 Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
                 Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
                 canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
-                count++;
             }
         }
     }
@@ -151,6 +146,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 p.setY(pd.getY());
                 p.setXVel(pd.getXVel());
                 p.setYVel(pd.getYVel());
+                p.setOrder(pd.getOrder());
             }
         }
     }
