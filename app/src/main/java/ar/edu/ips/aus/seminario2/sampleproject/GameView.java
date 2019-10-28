@@ -181,12 +181,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 case STATUS_PAUSED:
                     this.updating = false;
                     Log.d(TAG, "Game paused.");
-                    //Toast.makeText(getContext(), "GAME PAUSED", Toast.LENGTH_LONG).show();
+                    this.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "GAME PAUSED by SERVER", Toast.LENGTH_LONG).show();
+                        }
+                    });
                     break;
                 case STATUS_UPDATING:
                     this.updating = true;
                     Log.d(TAG, "Game updating.");
-                    //Toast.makeText(getContext(), "GAME RESUMED", Toast.LENGTH_LONG).show();
+                    this.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "GAME RESUMED by SERVER", Toast.LENGTH_LONG).show();
+                        }
+                    });
                     break;
                 default:
                     break;
@@ -200,10 +210,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if (this.updating) {
                 this.updating = false;
                 status = STATUS_PAUSED;
+                this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "GAME PAUSED", Toast.LENGTH_LONG).show();
+                    }
+                });
             } else {
                 this.updating = true;
                 status = STATUS_UPDATING;
-            }
+                this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "GAME RESUMED", Toast.LENGTH_LONG).show();
+                    }
+                });            }
             WroupService server = GameApp.getInstance().getServer();
             MessageWrapper message = new MessageWrapper();
             Gson json = new Gson();
