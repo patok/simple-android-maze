@@ -22,9 +22,15 @@ import com.abemart.wroup.common.messages.MessageWrapper;
 import com.abemart.wroup.service.WroupService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static ar.edu.ips.aus.seminario2.sampleproject.Message.MessageType.PLAYER_DATA;
 
 public class MazeBoardActivity extends AppCompatActivity
         implements View.OnClickListener, DataReceivedListener,
@@ -35,7 +41,7 @@ public class MazeBoardActivity extends AppCompatActivity
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
     private static final int MAX_DEVICES = 3;
 
-    private Button buttonUp, buttonDown, buttonLeft, buttonRight;
+    private Button buttonUp, buttonDown, buttonLeft, buttonRight, buttonPause;
 
     ImageView[] imageViews = null;
 
@@ -51,11 +57,13 @@ public class MazeBoardActivity extends AppCompatActivity
         buttonDown = findViewById(R.id.buttonDown);
         buttonLeft = findViewById(R.id.buttonLeft);
         buttonRight = findViewById(R.id.buttonRight);
+        buttonPause = findViewById(R.id.buttonPause);
 
         buttonUp.setOnClickListener(this);
         buttonDown.setOnClickListener(this);
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
+        buttonPause.setOnClickListener(this);
 
         mazeView = (GameView)findViewById(R.id.gameView);
         mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -162,6 +170,8 @@ public class MazeBoardActivity extends AppCompatActivity
         }
         else if (v == buttonRight) {
             mazeView.getPlayer().setNewDirection(MazeBoard.Direction.EAST);
+        } else if (v == buttonPause) {
+            mazeView.toggleStatus();
         }
 
     }
@@ -206,12 +216,22 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onDataReceived(MessageWrapper messageWrapper) {
-        // TODO implement data received handler
         if (!GameApp.getInstance().isGameServer()) {
-            // received all players data update
-            mazeView.updatePlayerData(messageWrapper.getMessage());
+            // may receive different kind of message from server
+            JsonObject object = JsonParser.parseString(messageWrapper.getMessage()).getAsJsonObject();
+            JsonElement typeElement = object.get("type");
+            switch (Message.MessageType.valueOf(typeElement.getAsString())){
+                case PLAYER_DATA:
+                    mazeView.updatePlayerData(messageWrapper.getMessage());
+                    break;
+                case GAME_DATA:
+                    break;
+                case GAME_STATUS:
+                    mazeView.updateStatus(messageWrapper.getMessage());
+                    break;
+            }
         } else {
-            // received individual player data
+            // server receives individual player data
             if (devices.containsKey(messageWrapper.getWroupDevice().getDeviceMac())){
                 mazeView.updatePlayerData(messageWrapper.getMessage());
             }
