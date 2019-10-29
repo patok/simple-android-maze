@@ -92,20 +92,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 thread.setRunning(false);
                 thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.d(TAG, "Error " + e.getMessage());
             }
             retry = false;
         }
     }
 
-    public void update(long delay) {
+    // update game world
+    public void update(long delta) {
         if (this.updating) {
             MazeBoard board = GameApp.getInstance().getMazeBoard();
             // update only actual player
-            player.move(board, delay);
+            player.move(board, delta);
             this.moves++;
 
-            // send all players data
+            // if we are server send all players data
             if (GameApp.getInstance().isGameServer()) {
                 if (this.moves % SERVER_UPDATE_RATIO == 0) {
                     WroupService server = GameApp.getInstance().getServer();
@@ -119,8 +120,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     server.sendMessageToAllClients(message);
                 }
             } else {
+                // if we are client send player data
                 if (this.moves % CLIENT_UPDATE_RATIO == 0) {
-                    // send player data
                     WroupClient client = GameApp.getInstance().getClient();
                     MessageWrapper message = new MessageWrapper();
                     Gson json = new Gson();
@@ -138,15 +139,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
-
-        if (canvas != null){
+        if (canvas != null) {
             MazeBoard board = GameApp.getInstance().getMazeBoard();
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            for (Player p:this.players.values()) {
-                Rect srcRect = playerSprites.getSourceRectangle(this, board, p, p.getOrder());
-                Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
-                Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
-                canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
+            if (board != null) {
+                for (Player p : this.players.values()) {
+                    Rect srcRect = playerSprites.getSourceRectangle(this, board, p, p.getOrder());
+                    Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
+                    Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+                    canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
+                }
             }
         }
     }

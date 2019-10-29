@@ -129,6 +129,7 @@ public class MazeBoardActivity extends AppCompatActivity
                 imageViews[(j%board.getHorizontalTileCount())+ board.getVerticalTileCount()*i] = imageView;
             }
         }
+        table.invalidate();
    }
 
     private int lookupResource(BoardPiece piece) {
@@ -217,7 +218,7 @@ public class MazeBoardActivity extends AppCompatActivity
     @Override
     public void onDataReceived(MessageWrapper messageWrapper) {
         if (!GameApp.getInstance().isGameServer()) {
-            // may receive different kind of message from server
+            // client may receive different kind of messages from server
             JsonObject object = JsonParser.parseString(messageWrapper.getMessage()).getAsJsonObject();
             JsonElement typeElement = object.get("type");
             switch (Message.MessageType.valueOf(typeElement.getAsString())){

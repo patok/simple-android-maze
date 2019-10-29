@@ -60,7 +60,8 @@ public class Player {
         this.yVel = yVel;
     }
 
-    public boolean move(MazeBoard board, long delay) {
+    // calculate player position based on previous position, velocity and time period.
+    public boolean move(MazeBoard board, long delta) {
         boolean moved = false;
         int pieceXPos = (int) getX();
         int pieceYPos = (int) getY();
@@ -72,7 +73,7 @@ public class Player {
             case NORTH:
                 if ((getY() > (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(NORTH)) {
-                    this.computeMovement(delay);
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d );
@@ -81,7 +82,7 @@ public class Player {
             case SOUTH:
                 if ((getY() < (double)pieceYPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(MazeBoard.Direction.SOUTH)) {
-                    this.computeMovement(delay);
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnY((double)pieceYPos + 0.5d);
@@ -90,7 +91,7 @@ public class Player {
             case WEST:
                 if ((getX() > (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(WEST)) {
-                    this.computeMovement(delay);
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -99,7 +100,7 @@ public class Player {
             case EAST:
                 if ( (getX() < (double)pieceXPos + 0.5d) ||
                         board.getPiece(pieceXPos, pieceYPos).isOpen(EAST)) {
-                    this.computeMovement(delay);
+                    this.computeMovement(delta);
                     moved = true;
                 } else {
                     stopOnX((double)pieceXPos + 0.5d);
@@ -121,9 +122,9 @@ public class Player {
         return NONE;
     }
 
-    private void computeMovement(long delay) {
-        this.x = this.x + this.xVel * delay / VEL_FACTOR;
-        this.y = this.y + this.yVel * delay / VEL_FACTOR;
+    private void computeMovement(long delta) {
+        this.x = this.x + this.xVel * delta / VEL_FACTOR;
+        this.y = this.y + this.yVel * delta / VEL_FACTOR;
         Log.d(TAG, String.format("position: %2.2f,%2.2f", this.x, this.y));
     }
 

@@ -14,7 +14,6 @@ public class GameAnimationThread extends Thread {
 
     public GameAnimationThread(SurfaceHolder surfaceHolder, GameView gameView){
         super();
-
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
     }
