@@ -70,6 +70,7 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
+        // TODO setup global variables earlier ?
         GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
         GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
         if (GameApp.getInstance().isGameServer()){
@@ -86,9 +87,11 @@ public class MazeBoardActivity extends AppCompatActivity
             GameApp.getInstance().setClient(client);
         }
 
-        MazeBoard board = MazeBoard.from("asdasd");
-        GameApp.getInstance().setMazeBoard(board);
-        setupMazeBoard(board);
+        if (GameApp.getInstance().isGameServer()) {
+            MazeBoard board = MazeBoard.from("asdasd");
+            GameApp.getInstance().setMazeBoard(board);
+            setupMazeBoard(board);
+        }
     }
 
     private void setupMazeBoard(MazeBoard board) {
@@ -179,9 +182,19 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onClientConnected(final WroupDevice wroupDevice) {
-        if (GameApp.getInstance().isGameServer())
+        if (GameApp.getInstance().isGameServer()) {
             addToDeviceList(wroupDevice);
-
+            // send mazeBoard instance to connected client
+            WroupService server = GameApp.getInstance().getServer();
+            MessageWrapper message = new MessageWrapper();
+            Gson json = new Gson();
+            Message<MazeBoard> data = new Message<MazeBoard>(Message.MessageType.GAME_DATA,
+                    GameApp.getInstance().getMazeBoard());
+            String msg = json.toJson(data);
+            message.setMessage(msg);
+            message.setMessageType(MessageWrapper.MessageType.NORMAL);
+            server.sendMessage(wroupDevice, message);
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -226,6 +239,16 @@ public class MazeBoardActivity extends AppCompatActivity
                     mazeView.updatePlayerData(messageWrapper.getMessage());
                     break;
                 case GAME_DATA:
+                    Gson gson = new Gson();
+                    final Message<MazeBoard> data = gson.fromJson(messageWrapper.getMessage(),
+                            new TypeToken<Message<MazeBoard>>(){}.getType());
+                    GameApp.getInstance().setMazeBoard(data.getPayload());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setupMazeBoard(data.getPayload());
+                        }
+                    });
                     break;
                 case GAME_STATUS:
                     mazeView.updateStatus(messageWrapper.getMessage());
