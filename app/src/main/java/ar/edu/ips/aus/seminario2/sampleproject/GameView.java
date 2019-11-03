@@ -146,7 +146,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 for (Player p : this.players.values()) {
                     Rect srcRect = playerSprites.getSourceRectangle(this, board, p, p.getOrder());
                     Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
-                    Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
                     canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
                 }
             }
