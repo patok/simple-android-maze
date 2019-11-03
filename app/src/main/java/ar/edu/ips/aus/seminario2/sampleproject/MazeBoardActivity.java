@@ -8,9 +8,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -24,21 +22,17 @@ import com.abemart.wroup.common.listeners.DataReceivedListener;
 import com.abemart.wroup.common.messages.MessageWrapper;
 import com.abemart.wroup.service.WroupService;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import static ar.edu.ips.aus.seminario2.sampleproject.Message.MessageType.PLAYER_DATA;
 
 public class MazeBoardActivity extends AppCompatActivity
-        implements View.OnClickListener, DataReceivedListener,
-        ClientConnectedListener, ClientDisconnectedListener,
-        GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+        implements DataReceivedListener, ClientConnectedListener,
+        ClientDisconnectedListener, GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
 
     public static final String EXTRA_SERVER_NAME = "SERVER_NAME";
     public static final String EXTRA_IS_SERVER = "IS_SERVER";
@@ -47,8 +41,6 @@ public class MazeBoardActivity extends AppCompatActivity
     private static final int SWIPE_TRESHOLD = 100;
     private static final int SWIPE_VELOCITY_TRESHOLD = 100;
     private GestureDetectorCompat gestureDetector;
-
-    private Button buttonUp, buttonDown, buttonLeft, buttonRight, buttonPause;
 
     ImageView[] imageViews = null;
 
@@ -60,24 +52,11 @@ public class MazeBoardActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maze);
 
-        buttonUp = findViewById(R.id.buttonUp);
-        buttonDown = findViewById(R.id.buttonDown);
-        buttonLeft = findViewById(R.id.buttonLeft);
-        buttonRight = findViewById(R.id.buttonRight);
-        buttonPause = findViewById(R.id.buttonPause);
-
-        buttonUp.setOnClickListener(this);
-        buttonDown.setOnClickListener(this);
-        buttonLeft.setOnClickListener(this);
-        buttonRight.setOnClickListener(this);
-        buttonPause.setOnClickListener(this);
-
         mazeView = (GameView)findViewById(R.id.gameView);
         mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        // TODO setup global variables earlier ?
         GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
         GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
         Log.d(TAG, "Is game server? : " + GameApp.getInstance().isGameServer());
@@ -170,25 +149,6 @@ public class MazeBoardActivity extends AppCompatActivity
                 R.drawable.m4};
 
         return iconLookupTable[iconIndex];
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == buttonUp) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
-        }
-        else if (v == buttonDown) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
-        }
-        else if (v == buttonLeft) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.WEST);
-        }
-        else if (v == buttonRight) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.EAST);
-        } else if (v == buttonPause) {
-            mazeView.toggleStatus();
-        }
-
     }
 
     @Override
