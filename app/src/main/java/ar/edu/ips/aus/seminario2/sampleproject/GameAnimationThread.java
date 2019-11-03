@@ -20,7 +20,7 @@ public class GameAnimationThread extends Thread {
 
     @Override
     public void run() {
-        final int COUNT_INTERVAL = 20;
+        final int COUNT_INTERVAL = 200;
         long startWhen = System.nanoTime();
         int intervalCount = 0;
 

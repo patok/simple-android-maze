@@ -80,14 +80,16 @@ public class MazeBoardActivity extends AppCompatActivity
         // TODO setup global variables earlier ?
         GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
         GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
+        Log.d(TAG, "Is game server? : " + GameApp.getInstance().isGameServer());
+
         if (GameApp.getInstance().isGameServer()){
-            WroupService server = WroupService.getInstance(this);
+            WroupService server = GameApp.getInstance().getServer();
             server.setDataReceivedListener(this);
             server.setClientDisconnectedListener(this);
             server.setClientConnectedListener(this);
             GameApp.getInstance().setServer(server);
         } else {
-            WroupClient client = WroupClient.getInstance(this);
+            WroupClient client = GameApp.getInstance().getClient();
             client.setDataReceivedListener(this);
             client.setClientDisconnectedListener(this);
             client.setClientConnectedListener(this);
@@ -193,16 +195,27 @@ public class MazeBoardActivity extends AppCompatActivity
     public void onClientConnected(final WroupDevice wroupDevice) {
         if (GameApp.getInstance().isGameServer()) {
             addToDeviceList(wroupDevice);
+            Log.d(TAG, "Client connected : " + wroupDevice.getDeviceName());
             // send mazeBoard instance to connected client
             WroupService server = GameApp.getInstance().getServer();
             MessageWrapper message = new MessageWrapper();
+            // FIXME replace w/ MazeBoard.toString() call
             Gson json = new Gson();
             Message<MazeBoard> data = new Message<MazeBoard>(Message.MessageType.GAME_DATA,
                     GameApp.getInstance().getMazeBoard());
             String msg = json.toJson(data);
             message.setMessage(msg);
             message.setMessageType(MessageWrapper.MessageType.NORMAL);
+            // FIXME find another way to make sure MazeBoardActivity
+            //  & listeners are up
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             server.sendMessage(wroupDevice, message);
+            Log.d(TAG, "Sending maze board data to new client " + wroupDevice.getDeviceName());
+
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -214,8 +227,10 @@ public class MazeBoardActivity extends AppCompatActivity
 
     @Override
     public void onClientDisconnected(final WroupDevice wroupDevice) {
-        if (GameApp.getInstance().isGameServer())
+        if (GameApp.getInstance().isGameServer()) {
             removeFromDeviceList(wroupDevice);
+            Log.d(TAG, "Client dis-connected : " + wroupDevice.getDeviceName());
+        }
 
         runOnUiThread(new Runnable() {
             @Override
@@ -248,16 +263,19 @@ public class MazeBoardActivity extends AppCompatActivity
                     mazeView.updatePlayerData(messageWrapper.getMessage());
                     break;
                 case GAME_DATA:
+                    // FIXME replace w/ MazeBoard.from() call
                     Gson gson = new Gson();
                     final Message<MazeBoard> data = gson.fromJson(messageWrapper.getMessage(),
                             new TypeToken<Message<MazeBoard>>(){}.getType());
-                    GameApp.getInstance().setMazeBoard(data.getPayload());
+                    final MazeBoard board = data.getPayload();
+                    GameApp.getInstance().setMazeBoard(board);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setupMazeBoard(data.getPayload());
+                            setupMazeBoard(board);
                         }
                     });
+                    Log.d(TAG, "Received maze board data!");
                     break;
                 case GAME_STATUS:
                     mazeView.updateStatus(messageWrapper.getMessage());

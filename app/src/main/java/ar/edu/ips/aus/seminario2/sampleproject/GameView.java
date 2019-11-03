@@ -103,34 +103,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (this.updating) {
             MazeBoard board = GameApp.getInstance().getMazeBoard();
             // update only actual player
-            player.move(board, delta);
-            this.moves++;
+            if (board != null) {
+                player.move(board, delta);
+                this.moves++;
 
-            // if we are server send all players data
-            if (GameApp.getInstance().isGameServer()) {
-                if (this.moves % SERVER_UPDATE_RATIO == 0) {
-                    WroupService server = GameApp.getInstance().getServer();
-                    MessageWrapper message = new MessageWrapper();
-                    Gson json = new Gson();
-                    Message<Player[]> data = new Message<Player[]>(Message.MessageType.PLAYER_DATA,
-                            players.values().toArray(new Player[]{}));
-                    String msg = json.toJson(data);
-                    message.setMessage(msg);
-                    message.setMessageType(MessageWrapper.MessageType.NORMAL);
-                    server.sendMessageToAllClients(message);
-                }
-            } else {
-                // if we are client send player data
-                if (this.moves % CLIENT_UPDATE_RATIO == 0) {
-                    WroupClient client = GameApp.getInstance().getClient();
-                    MessageWrapper message = new MessageWrapper();
-                    Gson json = new Gson();
-                    Message<Player[]> data = new Message<Player[]>(Message.MessageType.PLAYER_DATA,
-                            new Player[]{player});
-                    String msg = json.toJson(data);
-                    message.setMessage(msg);
-                    message.setMessageType(MessageWrapper.MessageType.NORMAL);
-                    client.sendMessageToServer(message);
+                // if we are server send all players data
+                if (GameApp.getInstance().isGameServer()) {
+                    if (this.moves % SERVER_UPDATE_RATIO == 0) {
+                        WroupService server = GameApp.getInstance().getServer();
+                        MessageWrapper message = new MessageWrapper();
+                        Gson json = new Gson();
+                        Message<Player[]> data = new Message<Player[]>(Message.MessageType.PLAYER_DATA,
+                                players.values().toArray(new Player[]{}));
+                        String msg = json.toJson(data);
+                        message.setMessage(msg);
+                        message.setMessageType(MessageWrapper.MessageType.NORMAL);
+                        server.sendMessageToAllClients(message);
+                    }
+                } else {
+                    // if we are client send player data
+                    if (this.moves % CLIENT_UPDATE_RATIO == 0) {
+                        WroupClient client = GameApp.getInstance().getClient();
+                        MessageWrapper message = new MessageWrapper();
+                        Gson json = new Gson();
+                        Message<Player[]> data = new Message<Player[]>(Message.MessageType.PLAYER_DATA,
+                                new Player[]{player});
+                        String msg = json.toJson(data);
+                        message.setMessage(msg);
+                        message.setMessageType(MessageWrapper.MessageType.NORMAL);
+                        client.sendMessageToServer(message);
+                    }
                 }
             }
         }

@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements GroupCreationDial
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(wiFiDirectBroadcastReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(wiFiDirectBroadcastReceiver);
 
         if (wroupService != null) {
             wroupService.disconnect();
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements GroupCreationDial
                 }
 
             });
+            GameApp.getInstance().setServer(wroupService);
         } else {
             Toast.makeText(getApplicationContext(), "Please, insert a group name", Toast.LENGTH_SHORT).show();
         }
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements GroupCreationDial
                 Toast.makeText(getApplicationContext(), "Error searching groups: " + wiFiP2PError, Toast.LENGTH_LONG).show();
             }
         });
+        GameApp.getInstance().setClient(wroupClient);
     }
 
     private void showPickGroupDialog(final List<WroupServiceDevice> devices) {

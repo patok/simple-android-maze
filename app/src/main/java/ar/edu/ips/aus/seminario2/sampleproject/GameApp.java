@@ -5,12 +5,13 @@ import com.abemart.wroup.service.WroupService;
 
 public class GameApp {
 
-    private static GameApp app;
+    // better instance initialization
+    private static final GameApp app;
+    static {
+        app = new GameApp();
+    }
 
     public static GameApp getInstance() {
-        if (app == null) {
-            app = new GameApp();
-        }
         return app;
     }
 
