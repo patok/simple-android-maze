@@ -1,6 +1,11 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 import android.graphics.PixelFormat;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +47,13 @@ public class MazeBoardActivity extends AppCompatActivity
     private static final int SWIPE_VELOCITY_TRESHOLD = 100;
     private GestureDetectorCompat gestureDetector;
 
+    public static final float SOUND_VOLUME = 0.5f;
+    public static final float FX_VOLUME = 1.0f;
+    private static final int FX_AUDIO_STREAMS = 3;
+    public MediaPlayer mediaPlayer = null;
+    public SoundPool soundPool = null;
+    public int beepSound, peepSound;
+
     ImageView[] imageViews = null;
 
     private GameView mazeView;
@@ -78,6 +90,50 @@ public class MazeBoardActivity extends AppCompatActivity
         setupMazeBoard(board);
 
         gestureDetector = new GestureDetectorCompat(this, this);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.creepy);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(SOUND_VOLUME, SOUND_VOLUME);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setAudioAttributes(attrs)
+                    .setMaxStreams(FX_AUDIO_STREAMS)
+                    .build();
+        } else {
+            soundPool = new SoundPool(FX_AUDIO_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        beepSound = soundPool.load(this, R.raw.beeep, 1);
+        peepSound = soundPool.load(this, R.raw.peeeeeep, 1);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mediaPlayer.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.release();
+        soundPool.release();
     }
 
     private void setupMazeBoard(MazeBoard board) {
