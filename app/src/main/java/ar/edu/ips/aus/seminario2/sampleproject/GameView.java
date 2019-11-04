@@ -38,6 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int moves = 0;
     private static final int SERVER_UPDATE_RATIO = 3;
     private static final int CLIENT_UPDATE_RATIO = 2;
+    private MazeBoardActivity activity = (MazeBoardActivity)this.getContext();
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -190,6 +191,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                             Toast.makeText(getContext(), "GAME PAUSED by SERVER", Toast.LENGTH_LONG).show();
                         }
                     });
+                    activity.soundPool.play(activity.peepSound, MazeBoardActivity.FX_VOLUME, MazeBoardActivity.FX_VOLUME, 0, 0, 1);
                     break;
                 case STATUS_UPDATING:
                     this.updating = true;
@@ -200,6 +202,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                             Toast.makeText(getContext(), "GAME RESUMED by SERVER", Toast.LENGTH_LONG).show();
                         }
                     });
+                    activity.soundPool.play(activity.beepSound, MazeBoardActivity.FX_VOLUME, MazeBoardActivity.FX_VOLUME, 0, 0, 1);
                     break;
                 default:
                     break;
@@ -219,6 +222,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         Toast.makeText(getContext(), "GAME PAUSED", Toast.LENGTH_LONG).show();
                     }
                 });
+                activity.soundPool.play(activity.peepSound, MazeBoardActivity.FX_VOLUME, MazeBoardActivity.FX_VOLUME, 0, 0, 1);
             } else {
                 this.updating = true;
                 status = STATUS_UPDATING;
@@ -227,7 +231,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     public void run() {
                         Toast.makeText(getContext(), "GAME RESUMED", Toast.LENGTH_LONG).show();
                     }
-                });            }
+                });
+                activity.soundPool.play(activity.beepSound, MazeBoardActivity.FX_VOLUME, MazeBoardActivity.FX_VOLUME, 0, 0, 1);
+            }
             WroupService server = GameApp.getInstance().getServer();
             MessageWrapper message = new MessageWrapper();
             Gson json = new Gson();
