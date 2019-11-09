@@ -1,5 +1,10 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 /**
  * A maze 2D rectangular board. Knows the maze layout, dimensions. Can be queried for width, height
  * and piece by positional (0 based index). Can export/import textual representation.
@@ -14,9 +19,13 @@ public class MazeBoard {
         WEST
     }
 
+    private static final String TAG = MazeBoard.class.getSimpleName();
+
     private int width = 0;
     private int height = 0;
     private BoardPiece[] board = null;
+    private int finishX;
+    private int finishY;
 
     public int getVerticalTileCount() {return height;}
 
@@ -27,6 +36,14 @@ public class MazeBoard {
             throw new ArrayIndexOutOfBoundsException("Check your coordinates!");
         }
         return board[x%width+height*y];
+    }
+
+    public int getFinishX() {
+        return finishX;
+    }
+
+    public int getFinishY() {
+        return finishY;
     }
 
     private MazeBoard() {}
@@ -130,8 +147,26 @@ public class MazeBoard {
         maze.board[79] = new BoardPiece(false,false,true,false);
         maze.board[80] = new BoardPiece(true,true, false, false);
 
+        maze.finishX = 4;
+        maze.finishY = 8;
         return maze;
     }
+
+    public static MazeBoard fromJSON(String jsonString){
+        Gson json = new Gson();
+        MazeBoard mazeBoard = null;
+        try {
+            mazeBoard = json.fromJson(jsonString, MazeBoard.class);
+        } catch (JsonSyntaxException e) {
+            Log.d(TAG, "Error: invalid JSON representation.");
+        }
+        return mazeBoard;
+    }
+
     public String toString() {return null;}
 
+    public String toJSON() {
+        Gson json = new Gson();
+        return json.toJson(this);
+    }
 }

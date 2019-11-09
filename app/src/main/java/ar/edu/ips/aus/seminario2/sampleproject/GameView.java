@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
@@ -243,6 +245,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             message.setMessage(msg);
             message.setMessageType(MessageWrapper.MessageType.NORMAL);
             server.sendMessageToAllClients(message);
+        }
+    }
+
+    public void checkFinished() {
+        if (GameApp.getInstance().isGameServer()
+                && this.updating ) {
+            Vector<Player> finished = new Vector<Player>();
+            final StringBuffer winnersMessage = new StringBuffer("Congratulate Winners: ");
+            for (Player player : players.values()) {
+                MazeBoard mazeBoard = GameApp.getInstance().getMazeBoard();
+                if (player.getX() <= mazeBoard.getFinishX() + 0.75d
+                        && player.getX() >= mazeBoard.getFinishX() + 0.25d
+                        && player.getY() >= mazeBoard.getFinishY() + 0.25d
+                        && player.getY() <= mazeBoard.getFinishY() + 0.75d) {
+                    finished.add(player);
+                    winnersMessage.append("\"").append(player.getName()).append("\", ");
+                }
+            }
+            if (!finished.isEmpty()) {
+                toggleStatus();
+                this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), winnersMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         }
     }
 }

@@ -178,6 +178,7 @@ public class MazeBoardActivity extends AppCompatActivity
                 imageViews[(j%board.getHorizontalTileCount())+ board.getVerticalTileCount()*i] = imageView;
             }
         }
+        imageViews[board.getFinishX()%width+height*board.getFinishY()].setImageResource(R.drawable.racing_flag);
         table.invalidate();
    }
 

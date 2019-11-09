@@ -17,6 +17,7 @@ public class Player {
     private double yVel = 0.0;
     private final static double VEL_FACTOR = 500000000;
     private int order;
+    private String name;
 
     public Player(String id, double x, double y) {
         this.ID = id;
@@ -170,4 +171,14 @@ public class Player {
     public int getOrder() {
         return this.order;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 }

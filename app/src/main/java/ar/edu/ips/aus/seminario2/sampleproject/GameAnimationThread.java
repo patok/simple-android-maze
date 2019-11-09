@@ -32,6 +32,7 @@ public class GameAnimationThread extends Thread {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
                     this.gameView.update(now-previousTick);
+                    this.gameView.checkFinished();
                     this.gameView.draw(canvas);
                 }
                 previousTick = now;
