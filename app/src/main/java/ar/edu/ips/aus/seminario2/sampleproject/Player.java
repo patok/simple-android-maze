@@ -23,6 +23,7 @@ public class Player {
         this.ID = id;
         this.x = x;
         this.y = y;
+        this.name = "Player Unknown";
     }
 
     public String getID() {

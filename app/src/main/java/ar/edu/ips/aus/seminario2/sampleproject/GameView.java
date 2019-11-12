@@ -3,6 +3,7 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -276,19 +277,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 });
 
                 ScoreDatabase db = ScoreDatabase.getDatabase(activity);
-                AsyncTask<Void, Void, Void> updates = new UpdateScores(db, player);
+                AsyncTask<Void, Void, Void> updates = new UpdateScoresTask(db, player);
                 updates.execute();
+
+                // call new activity
+                Intent intent = new Intent(this.getContext(), FinalScoresActivity.class);
+                getContext().startActivity(intent);
             }
         }
     }
 }
 
-class UpdateScores extends AsyncTask<Void, Void, Void> {
+class UpdateScoresTask extends AsyncTask<Void, Void, Void> {
 
     ScoreDatabase db;
     Player player;
 
-    public UpdateScores(ScoreDatabase db, Player player) {
+    public UpdateScoresTask(ScoreDatabase db, Player player) {
         this.db = db;
         this.player = player;
     }
@@ -303,6 +308,7 @@ class UpdateScores extends AsyncTask<Void, Void, Void> {
             score.setPoints(1);
             db.scoreDAO().insert(score);
         } else {
+            score.setPlayerName(player.getName());
             score.setPoints(score.getPoints() + 1);
             db.scoreDAO().update(score);
         }
