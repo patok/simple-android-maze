@@ -147,8 +147,8 @@ public class MazeBoard {
         maze.board[79] = new BoardPiece(false,false,true,false);
         maze.board[80] = new BoardPiece(true,true, false, false);
 
-        maze.finishX = 4;
-        maze.finishY = 8;
+        maze.finishX = 0;
+        maze.finishY = 1;
         return maze;
     }
 
