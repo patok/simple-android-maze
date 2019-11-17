@@ -33,6 +33,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class MazeBoardActivity extends AppCompatActivity
         implements DataReceivedListener, ClientConnectedListener,
@@ -69,8 +70,6 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
-        GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
         Log.d(TAG, "Is game server? : " + GameApp.getInstance().isGameServer());
 
         if (GameApp.getInstance().isGameServer()){
@@ -212,17 +211,6 @@ public class MazeBoardActivity extends AppCompatActivity
     public void onClientConnected(final WroupDevice wroupDevice) {
         if (GameApp.getInstance().isGameServer()) {
             addToDeviceList(wroupDevice);
-            Log.d(TAG, "Client connected : " + wroupDevice.getDeviceName());
-            // send mazeBoard instance to connected client
-            WroupService server = GameApp.getInstance().getServer();
-            MessageWrapper message = new MessageWrapper();
-            // FIXME replace w/ MazeBoard.toString() call
-            Gson json = new Gson();
-            Message<MazeBoard> data = new Message<MazeBoard>(Message.MessageType.GAME_DATA,
-                    GameApp.getInstance().getMazeBoard());
-            String msg = json.toJson(data);
-            message.setMessage(msg);
-            message.setMessageType(MessageWrapper.MessageType.NORMAL);
             // FIXME find another way to make sure MazeBoardActivity
             //  & listeners are up
             try {
@@ -230,9 +218,8 @@ public class MazeBoardActivity extends AppCompatActivity
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            server.sendMessage(wroupDevice, message);
-            Log.d(TAG, "Sending maze board data to new client " + wroupDevice.getDeviceName());
-
+            sendMazeBoardToNewClient(wroupDevice);
+            sendPlayerInitialPosition(wroupDevice);
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -241,6 +228,50 @@ public class MazeBoardActivity extends AppCompatActivity
             }
         });
     }
+
+    /**
+     * Send mazeBoard instance to connected client.
+     *
+     * @param wroupDevice
+     */
+    private void sendMazeBoardToNewClient(WroupDevice wroupDevice) {
+        WroupService server = GameApp.getInstance().getServer();
+        MessageWrapper message = new MessageWrapper();
+        Gson json = new Gson();
+        Message<MazeBoard> data = new Message<MazeBoard>(Message.MessageType.GAME_DATA,
+                GameApp.getInstance().getMazeBoard());
+        String msg = json.toJson(data);
+        message.setMessage(msg);
+        message.setMessageType(MessageWrapper.MessageType.NORMAL);
+        server.sendMessage(wroupDevice, message);
+        Log.d(TAG, "Sending maze board data to new client " + wroupDevice.getDeviceName());
+    }
+
+    /**
+     * Send initial Player position and extra data.
+     *
+     * @param wroupDevice
+     */
+    private void sendPlayerInitialPosition(WroupDevice wroupDevice) {
+        Random random = new Random();
+        MazeBoard board = GameApp.getInstance().getMazeBoard();
+        double randomX = random.nextInt(board.getHorizontalTileCount());
+        double randomY = random.nextInt(board.getVerticalTileCount());
+        Player player = new Player(null, randomX, randomY);
+        player.setOrder(PlayerSprite.getRandomSpriteNumber());
+
+        WroupService server = GameApp.getInstance().getServer();
+        MessageWrapper message = new MessageWrapper();
+        Gson json = new Gson();
+        Message<Player[]> data = new Message<Player[]>(Message.MessageType.PLAYER_DATA,
+                new Player[]{player});
+        String msg = json.toJson(data);
+        message.setMessage(msg);
+        message.setMessageType(MessageWrapper.MessageType.NORMAL);
+        server.sendMessage(wroupDevice, message);
+        Log.d(TAG, "Sending player initial data to new client " + wroupDevice.getDeviceName());
+    }
+
 
     @Override
     public void onClientDisconnected(final WroupDevice wroupDevice) {

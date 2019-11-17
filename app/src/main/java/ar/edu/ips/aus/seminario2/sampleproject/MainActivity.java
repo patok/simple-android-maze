@@ -189,9 +189,10 @@ public class MainActivity extends AppCompatActivity implements GroupCreationDial
 
 
     private void startGameActivity(String groupName, boolean isGroupOwner) {
+        GameApp.getInstance().setServerName(groupName);
+        GameApp.getInstance().setGameServer(isGroupOwner);
+
         Intent intent = new Intent(getApplicationContext(), MazeBoardActivity.class);
-        intent.putExtra(MazeBoardActivity.EXTRA_SERVER_NAME, groupName);
-        intent.putExtra(MazeBoardActivity.EXTRA_IS_SERVER, isGroupOwner);
         startActivity(intent);
     }
 }

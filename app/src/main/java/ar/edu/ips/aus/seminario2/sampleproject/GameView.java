@@ -1,11 +1,7 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -25,10 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Vector;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -64,14 +57,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private void init() {
         getHolder().addCallback(this);
 
-        String id = Settings.Secure.getString(getContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);
-        player = new Player(id,0.5,0.5);
-        players.put(id, player);
-
         playerSprites = new PlayerSprite(getResources());
-        player.setOrder(playerSprites.getRandomSpriteNumber());
 
+        if (GameApp.getInstance().isGameServer()) {
+            String id = Settings.Secure.getString(getContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            player = new Player(id, 0.5, 0.5);
+            player.setOrder(PlayerSprite.getRandomSpriteNumber());
+            players.put(id, player);
+        }
         thread = new GameAnimationThread(getHolder(), this);
         setFocusable(true);
     }
@@ -166,6 +160,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Message<Player[]> playerData = gson.fromJson(message,
                 new TypeToken<Message<Player[]>>(){}.getType());
         for (Player pd:playerData.getPayload()) {
+            if (player == null){
+                String id = Settings.Secure.getString(getContext().getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                player = new Player(id, pd.getX(), pd.getY());
+                player.setOrder(pd.getOrder());
+                players.put(pd.getID(), player);
+            } else
             if (!player.getID().equals(pd.getID())) {
                 Player p = players.get(pd.getID());
                 if (p == null) {

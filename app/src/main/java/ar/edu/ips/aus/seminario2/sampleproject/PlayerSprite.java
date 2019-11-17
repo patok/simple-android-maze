@@ -85,7 +85,7 @@ class PlayerSprite {
         return new Rect((int)x,(int)y,(int)x+SPRITE_WIDTH,(int)y+SPRITE_HEIGHT);
     }
 
-    public int getRandomSpriteNumber(){
+    public static int getRandomSpriteNumber(){
         Random random = new Random();
         return random.nextInt(SPRITE_ORIGIN.length);
     }
