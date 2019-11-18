@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.app.ListActivity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FinalScoresActivity extends AppCompatActivity {
+public class FinalScoresActivity extends ListActivity {
 
     ListView playersView;
     private List<Map<String, String>> data = new ArrayList<>();

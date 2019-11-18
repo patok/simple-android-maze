@@ -11,7 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CDDC39"
-        android:text="Hall of Fame" />
+        android:fontFamily="cursive"
+        android:text="Hall of Fame"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#EE0552"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:typeface="sans" />
 
     <ListView
         android:id="@android:id/list"
@@ -21,10 +28,11 @@
         android:background="#4CAF50"
         android:drawSelectorOnTop="false" />
 
-    <!--TextView
+    <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="0"
         android:background="#CDDC39"
-        android:text="No winners yet!" /-->
+        android:text="No winners yet!" />
 </LinearLayout>
