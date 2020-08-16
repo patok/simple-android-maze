@@ -1,0 +1,17 @@
+Simple maze game - pendientes
+
++ resolver re-inicialización para poder realizar varios juegos
+ ++ MediaPlayer errores al parar y resumir la activity
+ ++ reinicializa Player, MazeBoard, etc
+ ++ investigar mejor la des/conexión de clientes, manejo de wifi-direct
++ mejorar flujo juego: 
+ ++ pantalla de bienvenida, para llenar nombre del jugador, modo servidor/cliente;
+ ++ pantalla o diálogo en espera para jugar;
+ ++ notificación ganador, transmisión de los scores!
++ mejor aprovechamiento de la superficie de la pantalla
+ ++ mejor alineación (portrait o landscape) según convenga al laberinto
+ ++ adecuado escala de las piezas y sprites del juego a las dimensiones del tablero
+ ++ llenado de espacios
++ multiples escenarios de laberintos y mas grandes!
++ resolver posicionamiento inicial de los jugadores respecto del mazeboard y punto de llegada
++ manejar situaciones de bloqueo del juego: servidor pierde control en la activity principal (ej. pausar juego globalmente).

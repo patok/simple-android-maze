@@ -147,8 +147,8 @@ public class MazeBoard {
         maze.board[79] = new BoardPiece(false,false,true,false);
         maze.board[80] = new BoardPiece(true,true, false, false);
 
-        maze.finishX = 0;
-        maze.finishY = 1;
+        maze.finishX = 4;
+        maze.finishY = 8;
         return maze;
     }
 
@@ -161,6 +161,26 @@ public class MazeBoard {
             Log.d(TAG, "Error: invalid JSON representation.");
         }
         return mazeBoard;
+    }
+
+    public static MazeBoard fromRandom(){
+        MazeBoard maze = new MazeBoard();
+        maze.height = 9; maze.width = 9;
+        maze.board = new BoardPiece[maze.height*maze.width];
+
+        BoardPiece finishPiece = new BoardPiece(false, false, false, false);
+        maze.board[maze.finishX%maze.width+maze.height*maze.finishY] = finishPiece;
+        int remaining = maze.height*maze.width-1;
+
+        while(remaining > 0){
+            int nrOfPieces = 0;
+
+
+
+            remaining -= nrOfPieces;
+        }
+
+        return null;
     }
 
     public String toString() {return null;}

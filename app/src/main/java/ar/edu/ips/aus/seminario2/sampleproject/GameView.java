@@ -291,6 +291,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 class UpdateScoresTask extends AsyncTask<Void, Void, Void> {
 
+    public static final int WINNER_POINTS = 10;
     ScoreDatabase db;
     Player player;
 
@@ -306,11 +307,11 @@ class UpdateScoresTask extends AsyncTask<Void, Void, Void> {
             score = new Score();
             score.setPlayerId(player.getID());
             score.setPlayerName(player.getName());
-            score.setPoints(1);
+            score.setPoints(WINNER_POINTS);
             db.scoreDAO().insert(score);
         } else {
             score.setPlayerName(player.getName());
-            score.setPoints(score.getPoints() + 1);
+            score.setPoints(score.getPoints() + WINNER_POINTS);
             db.scoreDAO().update(score);
         }
         return null;

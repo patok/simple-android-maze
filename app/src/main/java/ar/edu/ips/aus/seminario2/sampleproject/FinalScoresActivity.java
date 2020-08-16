@@ -43,7 +43,6 @@ public class FinalScoresActivity extends ListActivity {
 
 class RetrieveScoresTask extends AsyncTask<Void, Void, Void> {
 
-    //private ListView playersView;
     private Context context;
     private ListAdapter adapter;
     private ScoreDatabase db;
