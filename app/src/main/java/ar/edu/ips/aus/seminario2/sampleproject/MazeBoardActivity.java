@@ -2,7 +2,7 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -13,17 +13,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
-import com.abemart.wroup.client.WroupClient;
-import com.abemart.wroup.common.WroupDevice;
-import com.abemart.wroup.common.listeners.ClientConnectedListener;
-import com.abemart.wroup.common.listeners.ClientDisconnectedListener;
-import com.abemart.wroup.common.listeners.DataReceivedListener;
-import com.abemart.wroup.common.messages.MessageWrapper;
-import com.abemart.wroup.service.WroupService;
 
 public class MazeBoardActivity extends AppCompatActivity
-        implements View.OnClickListener, DataReceivedListener,
-        ClientConnectedListener, ClientDisconnectedListener {
+        implements View.OnClickListener {
 
     public static final String EXTRA_SERVER_NAME = "SERVER_NAME";
     public static final String EXTRA_IS_SERVER = "IS_SERVER";
@@ -58,17 +50,9 @@ public class MazeBoardActivity extends AppCompatActivity
         GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
         GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
         if (GameApp.getInstance().isGameServer()){
-            WroupService server = WroupService.getInstance(this);
-            server.setDataReceivedListener(this);
-            server.setClientDisconnectedListener(this);
-            server.setClientConnectedListener(this);
-            GameApp.getInstance().setServer(server);
+
         } else {
-            WroupClient client = WroupClient.getInstance(this);
-            client.setDataReceivedListener(this);
-            client.setClientDisconnectedListener(this);
-            client.setClientConnectedListener(this);
-            GameApp.getInstance().setClient(client);
+
         }
 
         MazeBoard board = MazeBoard.from("asdasd");
@@ -159,29 +143,4 @@ public class MazeBoardActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onClientConnected(final WroupDevice wroupDevice) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), getString(R.string.device_connected, wroupDevice.getDeviceName()), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    @Override
-    public void onClientDisconnected(final WroupDevice wroupDevice) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), getString(R.string.device_disconnected, wroupDevice.getDeviceName()), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    @Override
-    public void onDataReceived(MessageWrapper messageWrapper) {
-        // TODO implement data received handler
-        Log.d(TAG, messageWrapper.getMessage());
-    }
 }

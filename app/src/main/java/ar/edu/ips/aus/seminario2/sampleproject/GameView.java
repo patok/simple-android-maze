@@ -13,9 +13,6 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.abemart.wroup.client.WroupClient;
-import com.abemart.wroup.common.messages.MessageWrapper;
-
 import java.util.Random;
 import java.util.Vector;
 
