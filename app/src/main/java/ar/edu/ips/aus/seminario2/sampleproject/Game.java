@@ -26,8 +26,6 @@ public class Game {
     }
 
     private MazeBoard mazeBoard;
-    private String serverName;
-    private boolean isGameServer;
     private Player player;
     private Vector<Player> players = new Vector<>();
 
@@ -39,22 +37,6 @@ public class Game {
 
     public void setMazeBoard(MazeBoard mazeBoard) {
         this.mazeBoard = mazeBoard;
-    }
-
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public boolean isGameServer() {
-        return isGameServer;
-    }
-
-    public void setGameServer(boolean gameServer) {
-        isGameServer = gameServer;
     }
 
     public void initPlayers() {
@@ -92,17 +74,6 @@ public class Game {
             }
             p.move(board);
         }
-/*
-        // TODO send coordinates
-        if (client != null){
-            MessageWrapper message = new MessageWrapper();
-            message.setMessage(String.format("position: %f2.2,%f2.2", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
-            message.setMessageType(MessageWrapper.MessageType.NORMAL);
-            client.sendMessageToServer(message);
-        }
-
-        Log.d("MOVE:", String.format("position: %2.2f,%2.2f", this.board.getPlayer().getX(), this.board.getPlayer().getY()));
-*/
     }
 
 }

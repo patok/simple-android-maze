@@ -46,14 +46,6 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        Game.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
-        Game.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
-        if (Game.getInstance().isGameServer()){
-
-        } else {
-
-        }
-
         MazeBoard board = MazeBoard.from("asdasd");
         Game.getInstance().setMazeBoard(board);
         setupMazeBoard(board);
