@@ -3,7 +3,7 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.Toast;
 
 
 public class MazeBoardActivity extends AppCompatActivity
@@ -47,16 +46,16 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        GameApp.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
-        GameApp.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
-        if (GameApp.getInstance().isGameServer()){
+        Game.getInstance().setServerName(getIntent().getStringExtra(this.EXTRA_SERVER_NAME));
+        Game.getInstance().setGameServer(getIntent().getBooleanExtra(this.EXTRA_IS_SERVER, false));
+        if (Game.getInstance().isGameServer()){
 
         } else {
 
         }
 
         MazeBoard board = MazeBoard.from("asdasd");
-        GameApp.getInstance().setMazeBoard(board);
+        Game.getInstance().setMazeBoard(board);
         setupMazeBoard(board);
     }
 
@@ -129,16 +128,16 @@ public class MazeBoardActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         if (v == buttonUp) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
+            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
         }
         else if (v == buttonDown) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
+            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
         }
         else if (v == buttonLeft) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.WEST);
+            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.WEST);
         }
         else if (v == buttonRight) {
-            mazeView.getPlayer().setNewDirection(MazeBoard.Direction.EAST);
+            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.EAST);
         }
 
     }
