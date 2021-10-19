@@ -2,6 +2,15 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 import java.util.Vector;
@@ -10,10 +19,25 @@ public class Game {
 
     private static Game app;
     private static Context context;
+    private static DatabaseReference database;
+    private static final String TAG = "PLAYER";
 
     public static Game getInstance() {
         if (app == null) {
             app = new Game();
+            database = FirebaseDatabase.getInstance().getReference("/player");
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Player player = snapshot.getValue(Player.class);
+                    Log.d(TAG, player.toString());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w(TAG, "onCancelled", error.toException());
+                }
+            });
         }
         return app;
     }
@@ -43,14 +67,7 @@ public class Game {
         String id = Settings.Secure.getString(this.context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         player = new Player(id,0.5,0.5);
-        Player player2 = new Player("NNNN", 8.5, 8.5);
-        player2.setNewDirection(MazeBoard.Direction.NORTH);
-        Player player3 = new Player("ZZZZ", 0, 8.5);
-        player3.setNewDirection(MazeBoard.Direction.NORTH);
-
         players.add(player);
-        players.add(player2);
-        players.add(player3);
     }
 
     public Player getPlayer() {
@@ -74,6 +91,11 @@ public class Game {
             }
             p.move(board);
         }
+        sendPlayerData();
+    }
+
+    private void sendPlayerData() {
+        database.setValue(player);
     }
 
 }
