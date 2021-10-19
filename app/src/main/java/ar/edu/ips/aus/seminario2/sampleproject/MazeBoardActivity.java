@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,6 @@ import android.widget.TableRow;
 public class MazeBoardActivity extends AppCompatActivity
         implements View.OnClickListener {
 
-    public static final String EXTRA_SERVER_NAME = "SERVER_NAME";
-    public static final String EXTRA_IS_SERVER = "IS_SERVER";
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
 
     private Button buttonUp, buttonDown, buttonLeft, buttonRight;
@@ -46,9 +45,7 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        MazeBoard board = MazeBoard.from("asdasd");
-        Game.getInstance().setMazeBoard(board);
-        setupMazeBoard(board);
+        setupMazeBoard(Game.getInstance().getMazeBoard());
     }
 
     private void setupMazeBoard(MazeBoard board) {

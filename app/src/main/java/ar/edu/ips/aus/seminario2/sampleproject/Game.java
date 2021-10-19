@@ -2,14 +2,31 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.util.Log;
 
-import java.util.Random;
-import java.util.Vector;
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game {
 
     private static Game app;
+    private String ID;
+    private Map<String, Player> players = new HashMap<>();
+    private GameMetadata gameMetadata;
+
     private static Context context;
+    private static DatabaseReference database;
+    private static final String TAG = "PLAYER";
 
     public static Game getInstance() {
         if (app == null) {
@@ -25,55 +42,84 @@ public class Game {
         return getInstance();
     }
 
-    private MazeBoard mazeBoard;
-    private Player player;
-    private Vector<Player> players = new Vector<>();
-
     private Game() {}
 
     public MazeBoard getMazeBoard() {
-        return mazeBoard;
+        return gameMetadata.getGameBoard();
     }
 
     public void setMazeBoard(MazeBoard mazeBoard) {
-        this.mazeBoard = mazeBoard;
+        this.gameMetadata.setGameBoard(mazeBoard);
     }
 
     public void initPlayers() {
-        String id = Settings.Secure.getString(this.context.getContentResolver(),
+        ID = Settings.Secure.getString(this.context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        player = new Player(id,0.5,0.5);
-        Player player2 = new Player("NNNN", 8.5, 8.5);
-        player2.setNewDirection(MazeBoard.Direction.NORTH);
-        Player player3 = new Player("ZZZZ", 0, 8.5);
-        player3.setNewDirection(MazeBoard.Direction.NORTH);
+        players.clear();
+        Player player = new Player(ID,0.5,0.5);
+        players.put(ID, player);
 
-        players.add(player);
-        players.add(player2);
-        players.add(player3);
+        initDatabase();
     }
+
+    private void initDatabase() {
+        if (database != null) {
+            database.removeEventListener(playerDataListener);
+        }
+        String path = String.format("/%s/players",gameMetadata.getId());
+        database = FirebaseDatabase.getInstance().getReference(path);
+        database.addValueEventListener(playerDataListener);
+    }
+
+    ValueEventListener playerDataListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if (snapshot.exists()) {
+                GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
+                        new GenericTypeIndicator<HashMap<String, Player>>() {
+                        };
+                HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
+                for (Player player : inboundPlayers.values()) {
+                    if (player.getID() != getInstance().ID) {
+                        getInstance().players.put(player.getID(), player);
+                    }
+                    Log.d(TAG, player.toString());
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.w(TAG, "onCancelled", error.toException());
+        }
+    };
 
     public Player getPlayer() {
-        return player;
+        return players.get(ID);
     }
 
-    public Vector<Player> getPlayers() {
-        return players;
+    public Player getPlayerById(String id) {
+        return players.get(ID);
+    }
+
+    public Collection<Player> getPlayers() {
+        return players.values();
     }
 
     public void update() {
-        // TODO update all players
+        // update all players move
         MazeBoard board = Game.getInstance().getMazeBoard();
-        Random rand = new Random();
-        MazeBoard.Direction[] values = MazeBoard.Direction.values();
         for (Player p: Game.getInstance().getPlayers()) {
-            // randomly update other players
-            if (p != Game.getInstance().getPlayer() &&
-                    p.getDirection() == MazeBoard.Direction.NONE){
-                p.setNewDirection(values[rand.nextInt(values.length)]);
-            }
             p.move(board);
         }
+        sendPlayerData();
     }
 
+    private void sendPlayerData() {
+        database.child(ID).setValue(getPlayer());
+    }
+
+    public void setGameMetadata(GameMetadata metadata) {
+        this.gameMetadata = metadata;
+    }
 }
