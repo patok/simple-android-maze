@@ -10,8 +10,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
@@ -25,12 +28,26 @@ public class Game {
     public static Game getInstance() {
         if (app == null) {
             app = new Game();
-            database = FirebaseDatabase.getInstance().getReference("/player");
+            database = FirebaseDatabase.getInstance().getReference("/players");
             database.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Player player = snapshot.getValue(Player.class);
-                    Log.d(TAG, player.toString());
+                    GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
+                            new GenericTypeIndicator<HashMap<String, Player>>() {};
+                    HashMap<String, Player> players = snapshot.getValue(tweakingTypeIndicator);
+                    for (Player player: players.values()) {
+                        // FIXME improve player lookup and update!
+                        for (Player localPlayer :
+                                getInstance().getPlayers()) {
+                            if (player.getID() == localPlayer.getID()) {
+                                localPlayer.setX(player.getX());
+                                localPlayer.setY(player.getY());
+                                localPlayer.setXVel(player.getXVel());
+                                localPlayer.setYVel(player.getYVel());
+                            }
+                        }
+                        Log.d(TAG, player.toString());
+                    }
                 }
 
                 @Override
@@ -52,6 +69,7 @@ public class Game {
     private MazeBoard mazeBoard;
     private Player player;
     private Vector<Player> players = new Vector<>();
+    private String ID;
 
     private Game() {}
 
@@ -64,9 +82,9 @@ public class Game {
     }
 
     public void initPlayers() {
-        String id = Settings.Secure.getString(this.context.getContentResolver(),
+        ID = Settings.Secure.getString(this.context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        player = new Player(id,0.5,0.5);
+        player = new Player(ID,0.5,0.5);
         players.add(player);
     }
 
@@ -85,7 +103,7 @@ public class Game {
         MazeBoard.Direction[] values = MazeBoard.Direction.values();
         for (Player p: Game.getInstance().getPlayers()) {
             // randomly update other players
-            if (p != Game.getInstance().getPlayer() &&
+            if (p.getID() != ID &&
                     p.getDirection() == MazeBoard.Direction.NONE){
                 p.setNewDirection(values[rand.nextInt(values.length)]);
             }
@@ -95,7 +113,7 @@ public class Game {
     }
 
     private void sendPlayerData() {
-        database.setValue(player);
+        database.child(player.getID()).setValue(player);
     }
 
 }
