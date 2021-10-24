@@ -13,10 +13,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-import java.util.Vector;
 
 public class Game {
 
@@ -34,19 +33,12 @@ public class Game {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
                             new GenericTypeIndicator<HashMap<String, Player>>() {};
-                    HashMap<String, Player> players = snapshot.getValue(tweakingTypeIndicator);
-                    for (Player player: players.values()) {
-                        // FIXME improve player lookup and update!
-                        for (Player localPlayer :
-                                getInstance().getPlayers()) {
-                            if (player.getID() == localPlayer.getID()) {
-                                localPlayer.setX(player.getX());
-                                localPlayer.setY(player.getY());
-                                localPlayer.setXVel(player.getXVel());
-                                localPlayer.setYVel(player.getYVel());
-                            }
-                        }
-                        Log.d(TAG, player.toString());
+                    HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
+                    for (Player player: inboundPlayers.values()) {
+                         if (player.getID() != getInstance().ID) {
+                             getInstance().players.put(player.getID(), player);
+                         }
+                         Log.d(TAG, player.toString());
                     }
                 }
 
@@ -67,8 +59,7 @@ public class Game {
     }
 
     private MazeBoard mazeBoard;
-    private Player player;
-    private Vector<Player> players = new Vector<>();
+    private Map<String, Player> players = new HashMap<>();
     private String ID;
 
     private Game() {}
@@ -84,36 +75,34 @@ public class Game {
     public void initPlayers() {
         ID = Settings.Secure.getString(this.context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        player = new Player(ID,0.5,0.5);
-        players.add(player);
+        Player player = new Player(ID,0.5,0.5);
+        players.put(ID, player);
     }
 
     public Player getPlayer() {
-        return player;
+        return players.get(ID);
     }
 
-    public Vector<Player> getPlayers() {
-        return players;
+    public Player getPlayerById(String id) {
+        return players.get(ID);
     }
 
+    public Collection<Player> getPlayers() {
+        return players.values();
+    }
+
+    // TODO method maybe moved to AnimationThread ??
     public void update() {
-        // TODO update all players
+        // update all players move
         MazeBoard board = Game.getInstance().getMazeBoard();
-        Random rand = new Random();
-        MazeBoard.Direction[] values = MazeBoard.Direction.values();
         for (Player p: Game.getInstance().getPlayers()) {
-            // randomly update other players
-            if (p.getID() != ID &&
-                    p.getDirection() == MazeBoard.Direction.NONE){
-                p.setNewDirection(values[rand.nextInt(values.length)]);
-            }
             p.move(board);
         }
         sendPlayerData();
     }
 
     private void sendPlayerData() {
-        database.child(player.getID()).setValue(player);
+        database.child(ID).setValue(getPlayer());
     }
 
 }

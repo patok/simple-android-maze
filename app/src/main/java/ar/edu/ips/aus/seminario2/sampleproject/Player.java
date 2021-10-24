@@ -124,6 +124,10 @@ public class Player {
         return NONE;
     }
 
+    public void setDirection(MazeBoard.Direction dir) {
+        setNewDirection(dir);
+    }
+
     private void computeMovement() {
         this.x = this.x + this.xVel;
         this.y = this.y + this.yVel;
