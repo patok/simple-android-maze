@@ -27,26 +27,27 @@ public class Game {
     public static Game getInstance() {
         if (app == null) {
             app = new Game();
-            database = FirebaseDatabase.getInstance().getReference("/players");
-            database.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
-                            new GenericTypeIndicator<HashMap<String, Player>>() {};
-                    HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
-                    for (Player player: inboundPlayers.values()) {
-                         if (player.getID() != getInstance().ID) {
-                             getInstance().players.put(player.getID(), player);
-                         }
-                         Log.d(TAG, player.toString());
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w(TAG, "onCancelled", error.toException());
-                }
-            });
+//            database = FirebaseDatabase.getInstance().getReference("/players");
+//            // TODO move valueListener to better location maybe?
+//            database.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                    GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
+//                            new GenericTypeIndicator<HashMap<String, Player>>() {};
+//                    HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
+//                    for (Player player: inboundPlayers.values()) {
+//                         if (player.getID() != getInstance().ID) {
+//                             getInstance().players.put(player.getID(), player);
+//                         }
+//                         Log.d(TAG, player.toString());
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError error) {
+//                    Log.w(TAG, "onCancelled", error.toException());
+//                }
+//            });
         }
         return app;
     }
@@ -102,7 +103,7 @@ public class Game {
     }
 
     private void sendPlayerData() {
-        database.child(ID).setValue(getPlayer());
+        //database.child(ID).setValue(getPlayer());
     }
 
 }
