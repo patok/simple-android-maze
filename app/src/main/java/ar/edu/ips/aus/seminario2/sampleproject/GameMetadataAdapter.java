@@ -20,11 +20,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * see sample code in https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
+ */
 public class GameMetadataAdapter
         extends RecyclerView.Adapter<GameMetadataAdapter.GameSelectionViewHolder>{
 
     private List<GameMetadata> gameList;
     private DatabaseReference mDatabaseReference;
+    private ItemClickListener mClickListener;
 
     public GameMetadataAdapter() {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -81,16 +85,39 @@ public class GameMetadataAdapter
         return gameList.size();
     }
 
-    public class GameSelectionViewHolder extends RecyclerView.ViewHolder {
+    public class GameSelectionViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+
         TextView gameTitle;
 
         public GameSelectionViewHolder(@NonNull View itemView) {
             super(itemView);
             gameTitle = itemView.findViewById(R.id.gameTitle);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(GameMetadata data){
             gameTitle.setText(data.getTitle());
         }
+
+        @Override
+        public void onClick(View view) {
+            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+        }
+    }
+
+    // convenience method for getting data at click position
+    String getItem(int pos) {
+        return gameList.get(pos).getTitle();
+    }
+
+    // allows clicks events to be caught
+    void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }
