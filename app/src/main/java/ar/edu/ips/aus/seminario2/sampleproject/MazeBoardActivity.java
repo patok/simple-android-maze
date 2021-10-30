@@ -1,5 +1,6 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;

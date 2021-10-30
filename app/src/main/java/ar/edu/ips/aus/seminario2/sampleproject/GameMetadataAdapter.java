@@ -107,12 +107,16 @@ public class GameMetadataAdapter
     }
 
     // convenience method for getting data at click position
-    String getItem(int pos) {
+    public String getItem(int pos) {
         return gameList.get(pos).getTitle();
     }
 
+    public List<GameMetadata> getData() {
+        return gameList;
+    }
+
     // allows clicks events to be caught
-    void setClickListener(ItemClickListener itemClickListener) {
+    public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
