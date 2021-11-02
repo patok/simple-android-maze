@@ -20,11 +20,13 @@ import java.util.Map;
 public class Game {
 
     private static Game app;
+    private String ID;
+    private Map<String, Player> players = new HashMap<>();
+    private GameMetadata gameMetadata;
+
     private static Context context;
     private static DatabaseReference database;
     private static final String TAG = "PLAYER";
-
-    private GameMetadata gameMetadata;
 
     public static Game getInstance() {
         if (app == null) {
@@ -40,18 +42,14 @@ public class Game {
         return getInstance();
     }
 
-    private MazeBoard mazeBoard;
-    private Map<String, Player> players = new HashMap<>();
-    private String ID;
-
     private Game() {}
 
     public MazeBoard getMazeBoard() {
-        return mazeBoard;
+        return gameMetadata.getGameBoard();
     }
 
     public void setMazeBoard(MazeBoard mazeBoard) {
-        this.mazeBoard = mazeBoard;
+        this.gameMetadata.setGameBoard(mazeBoard);
     }
 
     public void initPlayers() {
@@ -64,31 +62,36 @@ public class Game {
     }
 
     private void initDatabase() {
+        if (database != null) {
+            database.removeEventListener(playerDataListener);
+        }
         String path = String.format("/%s/players",gameMetadata.getId());
         database = FirebaseDatabase.getInstance().getReference(path);
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
-                            new GenericTypeIndicator<HashMap<String, Player>>() {
-                            };
-                    HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
-                    for (Player player : inboundPlayers.values()) {
-                        if (player.getID() != getInstance().ID) {
-                            getInstance().players.put(player.getID(), player);
-                        }
-                        Log.d(TAG, player.toString());
+        database.addValueEventListener(playerDataListener);
+    }
+
+    ValueEventListener playerDataListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if (snapshot.exists()) {
+                GenericTypeIndicator<HashMap<String, Player>> tweakingTypeIndicator =
+                        new GenericTypeIndicator<HashMap<String, Player>>() {
+                        };
+                HashMap<String, Player> inboundPlayers = snapshot.getValue(tweakingTypeIndicator);
+                for (Player player : inboundPlayers.values()) {
+                    if (player.getID() != getInstance().ID) {
+                        getInstance().players.put(player.getID(), player);
                     }
+                    Log.d(TAG, player.toString());
                 }
             }
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(TAG, "onCancelled", error.toException());
-            }
-        });
-    }
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.w(TAG, "onCancelled", error.toException());
+        }
+    };
 
     public Player getPlayer() {
         return players.get(ID);

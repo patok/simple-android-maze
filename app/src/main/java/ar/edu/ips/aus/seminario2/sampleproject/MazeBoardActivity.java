@@ -45,9 +45,7 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderMediaOverlay(true);
         mazeView.setZOrderOnTop(true);
 
-        MazeBoard board = MazeBoard.from("asdasd");
-        Game.getInstance().setMazeBoard(board);
-        setupMazeBoard(board);
+        setupMazeBoard(Game.getInstance().getMazeBoard());
     }
 
     private void setupMazeBoard(MazeBoard board) {

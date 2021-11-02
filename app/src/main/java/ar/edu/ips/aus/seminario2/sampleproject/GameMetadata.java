@@ -4,6 +4,7 @@ public class GameMetadata {
 
     private String id;
     private String title;
+    private MazeBoard gameBoard;
 
     public GameMetadata() {
     }
@@ -24,4 +25,11 @@ public class GameMetadata {
         this.title = title;
     }
 
+    public MazeBoard getGameBoard() {
+        return gameBoard;
+    }
+
+    public void setGameBoard(MazeBoard gameBoard) {
+        this.gameBoard = gameBoard;
+    }
 }
