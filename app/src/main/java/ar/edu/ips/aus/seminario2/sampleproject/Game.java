@@ -55,6 +55,7 @@ public class Game {
     public void initPlayers() {
         ID = Settings.Secure.getString(this.context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+        players.clear();
         Player player = new Player(ID,0.5,0.5);
         players.put(ID, player);
 
