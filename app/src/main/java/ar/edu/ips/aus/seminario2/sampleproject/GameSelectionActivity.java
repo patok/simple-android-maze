@@ -47,6 +47,8 @@ public class GameSelectionActivity extends AppCompatActivity
             data.setId(dataId);
             data.setTitle(gameNameInput.getText().toString());
             data.setGameBoard(MazeBoard.from("asdasd"));
+            data.setStatus("NEW");
+            data.setAuthor(Game.getInstance().getPlayer().getID());
 
             databaseReference.child(dataId).setValue(data);
 

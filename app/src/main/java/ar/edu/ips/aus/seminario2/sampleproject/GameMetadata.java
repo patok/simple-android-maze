@@ -5,6 +5,8 @@ public class GameMetadata {
     private String id;
     private String title;
     private MazeBoard gameBoard;
+    private String status;
+    private String author;
 
     public GameMetadata() {
     }
@@ -31,5 +33,21 @@ public class GameMetadata {
 
     public void setGameBoard(MazeBoard gameBoard) {
         this.gameBoard = gameBoard;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }
