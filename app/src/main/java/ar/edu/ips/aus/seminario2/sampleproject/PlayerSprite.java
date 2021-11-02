@@ -64,7 +64,6 @@ class PlayerSprite {
                 srcLeft = spriteOffset[(int) (y % spriteOffset.length)];
                 break;
             case NONE:
-                // FIXME fill in
                 break;
 
         }

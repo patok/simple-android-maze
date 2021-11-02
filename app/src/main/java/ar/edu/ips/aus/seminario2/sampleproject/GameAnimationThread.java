@@ -29,7 +29,6 @@ public class GameAnimationThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
-                    // TODO call board.update() instead
                     Game.getInstance().update();
                     this.gameView.draw(canvas);
                 }

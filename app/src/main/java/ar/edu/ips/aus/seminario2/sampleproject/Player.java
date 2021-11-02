@@ -7,7 +7,7 @@ import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.SOUTH;
 import static ar.edu.ips.aus.seminario2.sampleproject.MazeBoard.Direction.WEST;
 
 public class Player {
-    private final String ID;
+    private String ID;
     private double x;
     private double y;
     private double xVel = 0.0;
@@ -20,8 +20,15 @@ public class Player {
         this.y = y;
     }
 
+    public Player(){
+    }
+
     public String getID() {
         return ID;
+    }
+
+    public void setID(String id) {
+        ID = id;
     }
 
     public double getX() {
@@ -32,11 +39,11 @@ public class Player {
         return y;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -117,6 +124,10 @@ public class Player {
         return NONE;
     }
 
+    public void setDirection(MazeBoard.Direction dir) {
+        setNewDirection(dir);
+    }
+
     private void computeMovement() {
         this.x = this.x + this.xVel;
         this.y = this.y + this.yVel;
@@ -155,5 +166,16 @@ public class Player {
                 yVel = 0.0;
                 break;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "ID='" + ID + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", xVel=" + xVel +
+                ", yVel=" + yVel +
+                '}';
     }
 }
