@@ -20,7 +20,7 @@ import java.util.Map;
 public class Game {
 
     private static Game app;
-    private String ID;
+    public static String ID;
     private Map<String, Player> players = new HashMap<>();
     private GameMetadata gameMetadata;
 
@@ -38,6 +38,8 @@ public class Game {
     public static Game getInstance(Context globalContext) {
         if (context == null) {
             context = globalContext;
+            ID = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
         }
         return getInstance();
     }
@@ -53,8 +55,6 @@ public class Game {
     }
 
     public void initPlayers() {
-        ID = Settings.Secure.getString(this.context.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
         players.clear();
         Player player = new Player(ID,0.5,0.5);
         players.put(ID, player);
