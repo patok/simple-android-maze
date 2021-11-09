@@ -26,7 +26,6 @@ public class GameSelectionActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_selection);
 
-        // TODO move to other lifecycle methods?
         RecyclerView recyclerView = findViewById(R.id.gameListView);
         adapter = new GameMetadataAdapter();
         recyclerView.setAdapter(adapter);
@@ -47,7 +46,7 @@ public class GameSelectionActivity extends AppCompatActivity
             data.setId(dataId);
             data.setTitle(gameNameInput.getText().toString());
             data.setGameBoard(MazeBoard.from("asdasd"));
-            data.setStatus("NEW");
+            data.setStatus(GameMetadata.GameStatus.NEW.name());
             data.setAuthor(Game.getInstance(this.getApplicationContext()).ID);
 
             databaseReference.child(dataId).setValue(data);

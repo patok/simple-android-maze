@@ -2,10 +2,17 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 
 public class GameMetadata {
 
+    public enum GameStatus {
+        NEW,
+        RUNNING,
+        PAUSED,
+        FINISHED
+    }
+
     private String id;
     private String title;
     private MazeBoard gameBoard;
-    private String status;
+    public GameStatus status = GameStatus.NEW;
     private String author;
 
     public GameMetadata() {
@@ -35,19 +42,23 @@ public class GameMetadata {
         this.gameBoard = gameBoard;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getAuthor() {
         return author;
     }
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        try {
+            this.status = GameStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            // intentionally left-blank
+        }
     }
 }

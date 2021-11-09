@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ar.edu.ips.aus.seminario2.sampleproject.GameMetadata.GameStatus.*;
+
 public class Game {
 
     private static Game app;
@@ -25,8 +27,9 @@ public class Game {
     private GameMetadata gameMetadata;
 
     private static Context context;
-    private static DatabaseReference database;
+    private static DatabaseReference playerDatabase;
     private static final String TAG = "PLAYER";
+    private static DatabaseReference statusDatabase;
 
     public static Game getInstance() {
         if (app == null) {
@@ -59,16 +62,22 @@ public class Game {
         Player player = new Player(ID,0.5,0.5);
         players.put(ID, player);
 
-        initDatabase();
+        initPlayerDatabase();
+        initStatusDatabase();
     }
 
-    private void initDatabase() {
-        if (database != null) {
-            database.removeEventListener(playerDataListener);
+    private void initPlayerDatabase() {
+        if (playerDatabase != null) {
+            playerDatabase.removeEventListener(playerDataListener);
         }
         String path = String.format("/%s/players",gameMetadata.getId());
-        database = FirebaseDatabase.getInstance().getReference(path);
-        database.addValueEventListener(playerDataListener);
+        playerDatabase = FirebaseDatabase.getInstance().getReference(path);
+        playerDatabase.addValueEventListener(playerDataListener);
+    }
+
+    private void initStatusDatabase() {
+        String path = String.format("/%s/status",gameMetadata.getId());
+        statusDatabase = FirebaseDatabase.getInstance().getReference(path);
     }
 
     ValueEventListener playerDataListener = new ValueEventListener() {
@@ -83,7 +92,7 @@ public class Game {
                     if (player.getID() != getInstance().ID) {
                         getInstance().players.put(player.getID(), player);
                     }
-                    Log.d(TAG, player.toString());
+                    //Log.d(TAG, player.toString());
                 }
             }
         }
@@ -113,13 +122,45 @@ public class Game {
             p.move(board);
         }
         sendPlayerData();
-    }
+   }
 
     private void sendPlayerData() {
-        database.child(ID).setValue(getPlayer());
+        playerDatabase.child(ID).setValue(getPlayer());
     }
 
     public void setGameMetadata(GameMetadata metadata) {
         this.gameMetadata = metadata;
+    }
+
+    public GameMetadata getGameMetadata() {
+        return this.gameMetadata;
+    }
+
+    public void setStatus(String status){
+        this.gameMetadata.setStatus(status);
+    }
+
+    public GameMetadata.GameStatus getStatus() {
+        return this.gameMetadata.getStatus();
+    }
+
+    public void pauseOrStart() {
+        switch (gameMetadata.status) {
+            case NEW:
+            case PAUSED:
+                gameMetadata.setStatus(RUNNING.name());
+                updateGameStatus();
+                break;
+            case RUNNING:
+                gameMetadata.setStatus(PAUSED.name());
+                updateGameStatus();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateGameStatus() {
+        statusDatabase.setValue(gameMetadata.getStatus());
     }
 }
