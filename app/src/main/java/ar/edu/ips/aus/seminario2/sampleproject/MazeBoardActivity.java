@@ -132,6 +132,7 @@ public class MazeBoardActivity extends AppCompatActivity
         }
         else if (v == buttonPause) {
             // TODO pause game
+            Game.getInstance().setStatus(GameMetadata.GameStatus.RUNNING.toString());
         }
 
     }

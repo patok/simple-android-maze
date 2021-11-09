@@ -19,8 +19,6 @@ import java.util.Map;
 
 public class Game {
 
-    // TODO provide Game status logic
-    // TODO provide status management
     private static Game app;
     public static String ID;
     private Map<String, Player> players = new HashMap<>();
@@ -115,7 +113,7 @@ public class Game {
             p.move(board);
         }
         sendPlayerData();
-    }
+   }
 
     private void sendPlayerData() {
         database.child(ID).setValue(getPlayer());
@@ -123,5 +121,18 @@ public class Game {
 
     public void setGameMetadata(GameMetadata metadata) {
         this.gameMetadata = metadata;
+    }
+
+    public GameMetadata getGameMetadata() {
+        return this.gameMetadata;
+    }
+
+    // TODO overload setStatus/getStatus w/ GameStatus
+    public void setStatus(String status){
+        this.gameMetadata.setStatus(status);
+    }
+
+    public String getStatus() {
+        return this.gameMetadata.getStatus();
     }
 }
