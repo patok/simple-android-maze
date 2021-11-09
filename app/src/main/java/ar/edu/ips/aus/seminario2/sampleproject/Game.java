@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class Game {
 
+    // TODO provide Game status logic
+    // TODO provide status management
     private static Game app;
     public static String ID;
     private Map<String, Player> players = new HashMap<>();

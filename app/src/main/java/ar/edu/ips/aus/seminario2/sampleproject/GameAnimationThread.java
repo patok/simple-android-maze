@@ -7,7 +7,7 @@ import android.view.SurfaceHolder;
 public class GameAnimationThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private GameView gameView;
-    private boolean running;
+    private boolean running = false;
     public static Canvas canvas;
 
     public GameAnimationThread(SurfaceHolder surfaceHolder, GameView gameView){
@@ -22,6 +22,8 @@ public class GameAnimationThread extends Thread {
         final int COUNT_INTERVAL = 20;
         long startWhen = System.nanoTime();
         int intervalCount = 0;
+
+        // TODO init status listener in order to pause game
 
         while (running){
             canvas = null;
@@ -53,6 +55,7 @@ public class GameAnimationThread extends Thread {
                 }
             }
         }
+        // TODO remove status listeners
     }
 
     public void setRunning(boolean isRunning) {
