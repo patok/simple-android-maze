@@ -131,8 +131,8 @@ public class MazeBoardActivity extends AppCompatActivity
             Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.EAST);
         }
         else if (v == buttonPause) {
-            // TODO pause game
-            Game.getInstance().setStatus(GameMetadata.GameStatus.RUNNING.toString());
+            // change game status
+            Game.getInstance().pauseOrStart();
         }
 
     }

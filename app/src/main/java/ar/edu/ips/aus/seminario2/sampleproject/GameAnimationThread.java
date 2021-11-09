@@ -35,10 +35,10 @@ public class GameAnimationThread extends Thread {
 
         // FIXME beware of running multiple instances of this thread & MazeBoardActivity
 
-        // TODO init status listener in order to follow game status
+        // init status listener in order to follow game status
         String path = String.format("/%s/status",Game.getInstance().getGameMetadata().getId());
         statusDBReference = FirebaseDatabase.getInstance().getReference(path);
-        statusDBReference.addValueEventListener(new ValueEventListener() {
+        statusValueListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
@@ -53,14 +53,14 @@ public class GameAnimationThread extends Thread {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("GAT", "onCancelled", error.toException());
             }
-        });
+        };
+        statusDBReference.addValueEventListener(statusValueListener);
 
         while (running){
             canvas = null;
-            // TODO provide Game status logic
+            // Game status logic
             try {
-                if (Game.getInstance().getStatus().
-                        equals(GameMetadata.GameStatus.RUNNING.toString())) {
+                if (Game.getInstance().getStatus() == GameMetadata.GameStatus.RUNNING) {
                     canvas = this.surfaceHolder.lockCanvas();
                     synchronized (surfaceHolder){
                         Game.getInstance().update();
@@ -88,8 +88,10 @@ public class GameAnimationThread extends Thread {
                 }
             }
         }
-        // TODO update game status ??
-        // TODO remove status listeners
+
+        // remove status listeners
+        statusDBReference.removeEventListener(statusValueListener);
+        Log.d("GAT", "Exit GAT!");
     }
 
     public void setRunning(boolean isRunning) {

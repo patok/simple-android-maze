@@ -12,7 +12,7 @@ public class GameMetadata {
     private String id;
     private String title;
     private MazeBoard gameBoard;
-    private GameStatus status = GameStatus.NEW;
+    public GameStatus status = GameStatus.NEW;
     private String author;
 
     public GameMetadata() {
@@ -50,8 +50,8 @@ public class GameMetadata {
         this.author = author;
     }
 
-    public String getStatus() {
-        return status.name();
+    public GameStatus getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {

@@ -61,10 +61,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         boolean retry = true;
         while (retry){
             try {
+                // interrupt thread
                 thread.setRunning(false);
                 thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.d("MAZE: ", String.format("Error when destroying Surface %s", e.getMessage()));
             }
             retry = false;
         }
@@ -82,7 +83,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             for (Player p: Game.getInstance().getPlayers()) {
                 Rect srcRect = playerSprites.getSourceRectangle(this, board, p, count);
                 Rect dstRect = playerSprites.getDestinationRectangle(this, board, p);
-                Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
+                //Log.d("MAZE: ", String.format("src rect: %s - dst rect: %s", srcRect.toShortString(), dstRect.toShortString()));
                 canvas.drawBitmap(playerSprites.getSprites(), srcRect, dstRect, null);
                 count++;
             }
