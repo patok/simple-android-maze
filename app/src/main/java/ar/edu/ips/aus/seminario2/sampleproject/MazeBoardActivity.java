@@ -19,7 +19,7 @@ public class MazeBoardActivity extends AppCompatActivity
 
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
 
-    private Button buttonUp, buttonDown, buttonLeft, buttonRight;
+    private Button buttonUp, buttonDown, buttonLeft, buttonRight, buttonPause;
 
     ImageView[] imageViews = null;
 
@@ -34,11 +34,13 @@ public class MazeBoardActivity extends AppCompatActivity
         buttonDown = findViewById(R.id.buttonDown);
         buttonLeft = findViewById(R.id.buttonLeft);
         buttonRight = findViewById(R.id.buttonRight);
+        buttonPause = findViewById(R.id.buttonPause);
 
         buttonUp.setOnClickListener(this);
         buttonDown.setOnClickListener(this);
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
+        buttonPause.setOnClickListener(this);
 
         mazeView = (GameView)findViewById(R.id.gameView);
         mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -127,6 +129,9 @@ public class MazeBoardActivity extends AppCompatActivity
         }
         else if (v == buttonRight) {
             Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.EAST);
+        }
+        else if (v == buttonPause) {
+            // TODO pause game
         }
 
     }
