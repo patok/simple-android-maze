@@ -20,6 +20,9 @@ public class MazeBoard {
 
     private int width = 0;
     private int height = 0;
+    private int exitX = 9;
+    private int exitY = 9;
+
     private List<BoardPiece> board = null;
 
     public int getVerticalTileCount() {return height;}
@@ -154,6 +157,22 @@ public class MazeBoard {
         return maze;
     }
 
-    public String toString() {return String.format("Mazeboard %dx%d", this.width, this.height);}
+    public String toString() {return String.format("Mazeboard %dx%d - %d,%d",
+            this.width, this.height, this.exitX, this.exitY);}
 
+    public int getExitX() {
+        return exitX;
+    }
+
+    public void setExitX(int exitX) {
+        this.exitX = exitX;
+    }
+
+    public int getExitY() {
+        return exitY;
+    }
+
+    public void setExitY(int exitY) {
+        this.exitY = exitY;
+    }
 }
