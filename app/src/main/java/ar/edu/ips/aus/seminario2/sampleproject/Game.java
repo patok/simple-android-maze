@@ -116,11 +116,9 @@ public class Game {
     }
 
     public void update() {
-        // update all players move
+        // update only local player
         MazeBoard board = Game.getInstance().getMazeBoard();
-        for (Player p: Game.getInstance().getPlayers()) {
-            p.move(board);
-        }
+        this.getPlayer().move(board);
         sendPlayerData();
    }
 
