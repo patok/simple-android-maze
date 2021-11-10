@@ -120,6 +120,14 @@ public class Game {
         MazeBoard board = Game.getInstance().getMazeBoard();
         this.getPlayer().move(board);
         sendPlayerData();
+
+        // check exit?
+        for (Player p: Game.getInstance().getPlayers()) {
+            if (p.checkExit(board)) {
+                setWinner(p);
+                break;
+            }
+        }
    }
 
     private void sendPlayerData() {
@@ -160,5 +168,10 @@ public class Game {
 
     private void updateGameStatus() {
         statusDatabase.setValue(gameMetadata.getStatus());
+    }
+
+    private void setWinner(Player p) {
+        // TODO set winner value in DB
+        statusDatabase.setValue(FINISHED);
     }
 }

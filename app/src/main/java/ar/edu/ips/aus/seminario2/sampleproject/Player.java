@@ -178,4 +178,8 @@ public class Player {
                 ", yVel=" + yVel +
                 '}';
     }
+
+    public boolean checkExit(MazeBoard board) {
+        return false;
+    }
 }
