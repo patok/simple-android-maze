@@ -62,6 +62,7 @@ public class MazeBoard {
 
         // test with simple layout
         maze.height = 9; maze.width = 9;
+        maze.exitX = 6; maze.exitY = 5;
         BoardPiece[] simpleBoard = new BoardPiece[81];
         simpleBoard[0] = new BoardPiece(false,false,false,true);
         simpleBoard[1] = new BoardPiece(false,false, true, true);
@@ -98,17 +99,17 @@ public class MazeBoard {
         simpleBoard[29] = new BoardPiece(false,false,true,true);
         simpleBoard[30] = new BoardPiece(true,false, true, false);
         simpleBoard[31] = new BoardPiece(true,false,true,false);
-        simpleBoard[32] = new BoardPiece(true,false,true,false);
-        simpleBoard[33] = new BoardPiece(true,false,false,true);
-        simpleBoard[34] = new BoardPiece(false,false,true,true);
+        simpleBoard[32] = new BoardPiece(true,false,true,true);
+        simpleBoard[33] = new BoardPiece(true,false,true,true);
+        simpleBoard[34] = new BoardPiece(true,false,true,true);
         simpleBoard[35] = new BoardPiece(true,true,false,false);
 
         simpleBoard[36] = new BoardPiece(false,false,true,true);
         simpleBoard[37] = new BoardPiece(true,true,false,true);
-        simpleBoard[38] = new BoardPiece(false,true,false,true);
-        simpleBoard[39] = new BoardPiece(false,false,true,false);
+        simpleBoard[38] = new BoardPiece(false,true,true,true);
+        simpleBoard[39] = new BoardPiece(true,false,true,false);
         simpleBoard[40] = new BoardPiece(true,false, true, false);
-        simpleBoard[41] = new BoardPiece(true,false,true,true);
+        simpleBoard[41] = new BoardPiece(true,true,true,true);
         simpleBoard[42] = new BoardPiece(true,true,false,false);
         simpleBoard[43] = new BoardPiece(false,true,true,true);
         simpleBoard[44] = new BoardPiece(true,false,false,true);
