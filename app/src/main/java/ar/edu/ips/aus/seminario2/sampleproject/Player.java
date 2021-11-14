@@ -180,6 +180,10 @@ public class Player {
     }
 
     public boolean checkExit(MazeBoard board) {
+        if (Math.abs(getX() - board.getExitX() + 0.5) < 0.5 &&
+            Math.abs(getY() - board.getExitY() + 0.5) < 0.5 ) {
+            return true;
+        }
         return false;
     }
 }

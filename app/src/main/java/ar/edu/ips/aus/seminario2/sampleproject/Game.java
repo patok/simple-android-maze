@@ -92,7 +92,7 @@ public class Game {
                     if (player.getID() != getInstance().ID) {
                         getInstance().players.put(player.getID(), player);
                     }
-                    //Log.d(TAG, player.toString());
+                    Log.d(TAG, player.toString());
                 }
             }
         }
