@@ -5,7 +5,9 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,32 +17,23 @@ import android.widget.TableRow;
 
 
 public class MazeBoardActivity extends AppCompatActivity
-        implements View.OnClickListener {
+        implements GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
 
     private static final String TAG = MazeBoardActivity.class.getSimpleName();
-
-    private Button buttonUp, buttonDown, buttonLeft, buttonRight, buttonPause;
 
     ImageView[] imageViews = null;
 
     private GameView mazeView;
 
+    private static final int SWIPE_TRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_TRESHOLD = 100;
+    private GestureDetector gestureDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maze);
-
-        buttonUp = findViewById(R.id.buttonUp);
-        buttonDown = findViewById(R.id.buttonDown);
-        buttonLeft = findViewById(R.id.buttonLeft);
-        buttonRight = findViewById(R.id.buttonRight);
-        buttonPause = findViewById(R.id.buttonPause);
-
-        buttonUp.setOnClickListener(this);
-        buttonDown.setOnClickListener(this);
-        buttonLeft.setOnClickListener(this);
-        buttonRight.setOnClickListener(this);
-        buttonPause.setOnClickListener(this);
 
         mazeView = (GameView)findViewById(R.id.gameView);
         mazeView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -48,6 +41,8 @@ public class MazeBoardActivity extends AppCompatActivity
         mazeView.setZOrderOnTop(true);
 
         setupMazeBoard(Game.getInstance().getMazeBoard());
+
+        gestureDetector = new GestureDetector(this, this);
     }
 
     private void setupMazeBoard(MazeBoard board) {
@@ -120,24 +115,94 @@ public class MazeBoardActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == buttonUp) {
-            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
-        }
-        else if (v == buttonDown) {
-            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
-        }
-        else if (v == buttonLeft) {
-            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.WEST);
-        }
-        else if (v == buttonRight) {
-            Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.EAST);
-        }
-        else if (v == buttonPause) {
-            // change game status
-            Game.getInstance().pauseOrStart();
-        }
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
 
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent motionEvent) {
+        Game.getInstance().pauseOrStart();
+        return true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent downEvent, MotionEvent moveEvent, float velX, float velY) {
+        boolean eventConsumed = false;
+        float diffY = moveEvent.getY() - downEvent.getY();
+        float diffX = moveEvent.getX() - downEvent.getX();
+
+        if (Math.abs(diffX) > Math.abs(diffY)){
+            if (Math.abs(diffX) > SWIPE_TRESHOLD && Math.abs(velX) > SWIPE_VELOCITY_TRESHOLD) {
+                if (diffX > 0) {
+                    onSwipeRight();
+                } else {
+                    onSwipeLeft();
+                }
+                eventConsumed = true;
+            }
+        } else {
+            if (Math.abs(diffY) > SWIPE_TRESHOLD && Math.abs(velY) > SWIPE_VELOCITY_TRESHOLD){
+                if (diffY > 0) {
+                    onSwipeBottom();
+                } else {
+                    onSwipeTop();
+                }
+                eventConsumed = true;
+            }
+        }
+        return eventConsumed;
+    }
+
+    private void onSwipeTop() {
+        Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.NORTH);
+    }
+
+    private void onSwipeBottom() {
+        Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.SOUTH);
+    }
+
+    private void onSwipeLeft() {
+        Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.WEST);
+    }
+
+    private void onSwipeRight() {
+        Game.getInstance().getPlayer().setNewDirection(MazeBoard.Direction.EAST);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (gestureDetector.onTouchEvent(event))
+            return true;
+        return super.onTouchEvent(event);
     }
 
 }

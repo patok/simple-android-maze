@@ -3,6 +3,7 @@ package ar.edu.ips.aus.seminario2.sampleproject;
 import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -57,13 +58,17 @@ public class Game {
         this.gameMetadata.setGameBoard(mazeBoard);
     }
 
-    public void initPlayers() {
-        players.clear();
-        Player player = new Player(ID,0.5,0.5);
-        players.put(ID, player);
+    public void init() {
+        initPlayer();
 
         initPlayerDatabase();
         initStatusDatabase();
+    }
+
+    private void initPlayer() {
+        players.clear();
+        Player player = new Player(ID,0.5,0.5);
+        players.put(ID, player);
     }
 
     private void initPlayerDatabase() {
@@ -156,10 +161,12 @@ public class Game {
             case PAUSED:
                 gameMetadata.setStatus(RUNNING.name());
                 updateGameStatus();
+                Toast.makeText(context, "GAME RESUMED", Toast.LENGTH_LONG).show();
                 break;
             case RUNNING:
                 gameMetadata.setStatus(PAUSED.name());
                 updateGameStatus();
+                Toast.makeText(context, "GAME PAUSED", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;

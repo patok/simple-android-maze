@@ -35,7 +35,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Game.getInstance(this.getContext());
         getHolder().addCallback(this);
 
-        Game.getInstance().initPlayers();
+        Game.getInstance().init();
 
         playerSprites = new PlayerSprite(getResources());
 
