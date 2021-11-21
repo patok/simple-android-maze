@@ -205,4 +205,31 @@ public class MazeBoardActivity extends AppCompatActivity
         return super.onTouchEvent(event);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Game.getInstance().releaseSound();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Game.getInstance().stopSound();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Game.getInstance().playSound();
+    }
 }

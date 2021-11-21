@@ -1,6 +1,11 @@
 package ar.edu.ips.aus.seminario2.sampleproject;
 
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,6 +36,13 @@ public class Game {
     private static DatabaseReference playerDatabase;
     private static final String TAG = "PLAYER";
     private static DatabaseReference statusDatabase;
+
+    public static final float SOUND_VOLUME = 0.5f;
+    public static final float FX_VOLUME = 1.0f;
+    private static final int FX_AUDIO_STREAMS = 3;
+    public MediaPlayer mediaPlayer = null;
+    public SoundPool soundPool = null;
+    public int beepSound, peepSound;
 
     public static Game getInstance() {
         if (app == null) {
@@ -63,6 +75,46 @@ public class Game {
 
         initPlayerDatabase();
         initStatusDatabase();
+
+        // sound setup
+        initSound();
+    }
+
+    private void initSound() {
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.creepy);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(SOUND_VOLUME, SOUND_VOLUME);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setAudioAttributes(attrs)
+                    .setMaxStreams(FX_AUDIO_STREAMS)
+                    .build();
+        } else {
+            soundPool = new SoundPool(FX_AUDIO_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        beepSound = soundPool.load(context, R.raw.beeep, 1);
+        peepSound = soundPool.load(context, R.raw.peeeeeep, 1);
+
+    }
+
+    public void releaseSound() {
+        mediaPlayer.release();
+        soundPool.release();
+    }
+
+    public void stopSound() {
+        mediaPlayer.stop();
+    }
+
+    public void playSound() {
+        mediaPlayer.start();
     }
 
     private void initPlayer() {
@@ -149,6 +201,19 @@ public class Game {
 
     public void setStatus(String status){
         this.gameMetadata.setStatus(status);
+        // make sound effect
+        switch (GameMetadata.GameStatus.valueOf(status)) {
+            case PAUSED:
+                soundPool.play(peepSound, FX_VOLUME, FX_VOLUME, 0, 0, 1);
+                Toast.makeText(context, "GAME PAUSED", Toast.LENGTH_LONG).show();
+                break;
+            case RUNNING:
+                soundPool.play(beepSound, FX_VOLUME, FX_VOLUME, 0, 0, 1);
+                Toast.makeText(context, "GAME RESUMED", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
+        }
     }
 
     public GameMetadata.GameStatus getStatus() {
@@ -161,12 +226,10 @@ public class Game {
             case PAUSED:
                 gameMetadata.setStatus(RUNNING.name());
                 updateGameStatus();
-                Toast.makeText(context, "GAME RESUMED", Toast.LENGTH_LONG).show();
                 break;
             case RUNNING:
                 gameMetadata.setStatus(PAUSED.name());
                 updateGameStatus();
-                Toast.makeText(context, "GAME PAUSED", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
